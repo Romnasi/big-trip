@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Роман Насыров](https://up.htmlacademy.ru/ecmascript/14/user/642191).
-* Наставник: `Неизвестно`.
+* Наставник: [Виктор Кан](https://htmlacademy.ru/profile/viktorkan).
 
 ---
 
