@@ -3,8 +3,9 @@ import {createEventsFilter} from './view/filter-events.js';
 import {createTripInfoTemplate} from './view/trip-info.js';
 import {createTripCostTemplate} from './view/trip-cost.js';
 import {createTripSortTemplate} from './view/trip-sort.js';
-import {createFormTemplate} from './view/trip-form.js';
-import {createEditFromTemplate} from './view/edit-form.js';
+import {createTripListTemplate} from './view/trip-list.js';
+import {createСreationPointTemplate} from './view/creation-point.js';
+import {createPointEditTemplate} from './view/point-edit.js';
 import {createPointTemplate} from './view/trip-point.js';
 
 const POINT_COUNT = 3;
@@ -27,11 +28,12 @@ render(tripMainElement, createTripInfoTemplate(), 'afterbegin');
 const tripInfoElement = tripMainElement.querySelector('.trip-info');
 render(tripInfoElement, createTripCostTemplate(), 'beforeend');
 render(eventsElement, createTripSortTemplate(), 'beforeend');
-render(eventsElement, createFormTemplate(), 'beforeend');
-
+render(eventsElement, createTripListTemplate(), 'beforeend');
 
 const eventListElement = pageMainElement.querySelector('.trip-events__list');
-render(eventListElement, createEditFromTemplate(), 'afterbegin');
+
+render(eventListElement, createСreationPointTemplate(), 'beforeend');
+render(eventListElement, createPointEditTemplate(), 'afterbegin');
 
 for(let i = 0; i < POINT_COUNT; i++) {
   render(eventListElement, createPointTemplate(), 'beforeend');
