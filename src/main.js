@@ -7,8 +7,12 @@ import {createTripListTemplate} from './view/trip-list.js';
 import {createСreationPointTemplate} from './view/creation-point.js';
 import {createPointEditTemplate} from './view/point-edit.js';
 import {createPointTemplate} from './view/trip-point.js';
+import {generatePoint} from './mock/point-data.js';
 
-const POINT_COUNT = 3;
+const POINT_COUNT = 4;
+const points = new Array(POINT_COUNT).fill().map(() => generatePoint());
+
+console.log(points);
 
 const tripMainElement = document.querySelector('.trip-main');
 const navigationElement = tripMainElement.querySelector('.trip-controls__navigation');
