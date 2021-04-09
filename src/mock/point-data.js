@@ -14,6 +14,9 @@ const PHOTO_MIN_ID = 1;
 const PHOTO_MAX_ID = 100;
 const PHOTO_URL = 'http://picsum.photos/248/152?r=';
 
+const POINT_MIN_PRICE = 20;
+const POINT_MAX_PRICE = 700;
+
 const types = [
   'Taxi',
   'Bus',
@@ -94,7 +97,7 @@ const generateOffers = (type) => {
   const generateOffer = () => {
     return {
       type,
-      names: generateName(),
+      name: generateName(),
       price: generatePrice(),
     };
   };
@@ -120,7 +123,7 @@ const generateDate = () => {
   const START_TRIP_MIN_DAY = 7;
   const START_TRIP_MAX_DAY = 9;
   const MIN_TRIP_DURATION = 10;
-  const MAX_TRIP_DURATION = 120;
+  const MAX_TRIP_DURATION = 1900;
 
   const getRandomDuration = () => getRandomInteger(MIN_TRIP_DURATION, MAX_TRIP_DURATION);
   const daysGap = getRandomInteger(START_TRIP_MIN_DAY, START_TRIP_MAX_DAY);
@@ -151,5 +154,6 @@ export const generatePoint = () => {
     photos: generatePhotoURLs(),
     date: generateDate(),
     isFavorite: Boolean(getRandomInteger(0, 1)),
+    price: getRandomInteger(POINT_MIN_PRICE, POINT_MAX_PRICE),
   };
 };
