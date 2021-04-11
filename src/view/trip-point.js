@@ -1,10 +1,10 @@
 import dayjs from 'dayjs';
 
-export const createPointTemplate = (point) => {
+export const createPointTemplate = (points) => {
   const HOUR_IN_MINUTES = 60;
   const DAY_IN_MINUTES = 1440;
 
-  const {type, city, offers, date, isFavorite, price} = point;
+  const {type, city, addedOffers, date, isFavorite, price} = points;
 
 
   // Форматирование дат
@@ -66,8 +66,8 @@ export const createPointTemplate = (point) => {
   };
 
   const getDuration = () => {
-    const dateStart = dayjs(point.date.dateTo);
-    const dateFinish = dayjs(point.date.dateFrom);
+    const dateStart = dayjs(date.dateTo);
+    const dateFinish = dayjs(date.dateFrom);
     const durationInMin = dateFinish.diff(dateStart, 'minute');
 
     return getDurationFormat(durationInMin);
@@ -81,7 +81,7 @@ export const createPointTemplate = (point) => {
 
 
   const createOffers = () => {
-    return `${offers !== null ? Object.values(offers).map(({name, price}) => `<li class="event__offer">
+    return `${addedOffers !== null ? Object.values(addedOffers).map(({name, price}) => `<li class="event__offer">
       <span class="event__offer-title">${name}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${price}</span>
@@ -99,7 +99,7 @@ export const createPointTemplate = (point) => {
 
 
   const getOfferList = () => {
-    return offers === null ? '' : createOffersList();
+    return addedOffers === null ? '' : createOffersList();
   };
 
 

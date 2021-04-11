@@ -26,18 +26,18 @@ const render = (container, template, place) => {
 
 render(navigationElement, createSiteMenuTemplate(), 'beforeend');
 render(filtersElement, createEventsFilter(), 'beforeend');
-render(tripMainElement, createTripInfoTemplate(), 'afterbegin');
+render(tripMainElement, createTripInfoTemplate(points), 'afterbegin');
 
 const tripInfoElement = tripMainElement.querySelector('.trip-info');
-render(tripInfoElement, createTripCostTemplate(), 'beforeend');
+render(tripInfoElement, createTripCostTemplate(points), 'beforeend');
 render(eventsElement, createTripSortTemplate(), 'beforeend');
 render(eventsElement, createTripListTemplate(), 'beforeend');
 
 const eventListElement = pageMainElement.querySelector('.trip-events__list');
 
 render(eventListElement, createСreationPointTemplate(), 'beforeend');
-render(eventListElement, createPointEditTemplate(), 'afterbegin');
+render(eventListElement, createPointEditTemplate(points[0]), 'afterbegin');
 
-for(let i = 0; i < POINT_COUNT; i++) {
+for(let i = 1; i < POINT_COUNT; i++) {
   render(eventListElement, createPointTemplate(points[i]), 'beforeend');
 }
