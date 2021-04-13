@@ -1,4 +1,7 @@
 import dayjs from 'dayjs';
+import {getRandomInteger} from './../utils.js';
+import {getRandomEl} from './../utils.js';
+
 
 const DESC_MIN_COUNT = 1;
 const DESC_MAX_COUNT = 5;
@@ -91,16 +94,6 @@ export const offers = {
 };
 
 let lastPointDate = null;
-
-
-// helpers
-const getRandomInteger = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min; //Максимум и минимум включаются
-};
-
-const getRandomEl = (array) => array[getRandomInteger(0, array.length - 1)];
 
 
 // Генерируем данные для point'а
