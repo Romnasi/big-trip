@@ -7,8 +7,11 @@ import {createTripListTemplate} from './view/trip-list.js';
 import {createСreationPointTemplate} from './view/creation-point.js';
 import {createPointEditTemplate} from './view/point-edit.js';
 import {createPointTemplate} from './view/trip-point.js';
+import {generatePoint} from './mock/point-data.js';
 
-const POINT_COUNT = 3;
+const POINT_COUNT = 20;
+const points = new Array(POINT_COUNT).fill().map(() => generatePoint());
+
 
 const tripMainElement = document.querySelector('.trip-main');
 const navigationElement = tripMainElement.querySelector('.trip-controls__navigation');
@@ -23,18 +26,18 @@ const render = (container, template, place) => {
 
 render(navigationElement, createSiteMenuTemplate(), 'beforeend');
 render(filtersElement, createEventsFilter(), 'beforeend');
-render(tripMainElement, createTripInfoTemplate(), 'afterbegin');
+render(tripMainElement, createTripInfoTemplate(points), 'afterbegin');
 
 const tripInfoElement = tripMainElement.querySelector('.trip-info');
-render(tripInfoElement, createTripCostTemplate(), 'beforeend');
+render(tripInfoElement, createTripCostTemplate(points), 'beforeend');
 render(eventsElement, createTripSortTemplate(), 'beforeend');
 render(eventsElement, createTripListTemplate(), 'beforeend');
 
 const eventListElement = pageMainElement.querySelector('.trip-events__list');
 
 render(eventListElement, createСreationPointTemplate(), 'beforeend');
-render(eventListElement, createPointEditTemplate(), 'afterbegin');
+render(eventListElement, createPointEditTemplate(points[0]), 'afterbegin');
 
-for(let i = 0; i < POINT_COUNT; i++) {
-  render(eventListElement, createPointTemplate(), 'beforeend');
+for(let i = 1; i < POINT_COUNT; i++) {
+  render(eventListElement, createPointTemplate(points[i]), 'beforeend');
 }
