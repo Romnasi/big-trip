@@ -1,10 +1,10 @@
 import SiteMenuView from './view/site-menu.js';
-import {createEventsFilter} from './view/filter-events.js';
+import EventsFilterView from './view/filter-events.js';
 import {createTripInfoTemplate} from './view/trip-info.js';
 import {createTripCostTemplate} from './view/trip-cost.js';
-import {createTripSortTemplate} from './view/trip-sort.js';
-import {createTripListTemplate} from './view/trip-list.js';
-import {createСreationPointTemplate} from './view/creation-point.js';
+import TripSortView from './view/trip-sort.js';
+import TripListView from './view/trip-list.js';
+import CreationPointView from './view/creation-point.js';
 import {createPointEditTemplate} from './view/point-edit.js';
 import {createPointTemplate} from './view/trip-point.js';
 import {generatePoint} from './mock/point-data.js';
@@ -23,19 +23,19 @@ const eventsElement = pageMainElement.querySelector('.trip-events');
 
 
 renderElement(navigationElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
-renderTemplate(filtersElement, createEventsFilter(), 'beforeend');
+renderElement(filtersElement, new EventsFilterView().getElement(), RenderPosition.BEFOREEND);
 renderTemplate(tripMainElement, createTripInfoTemplate(points), 'afterbegin');
 
 const tripInfoElement = tripMainElement.querySelector('.trip-info');
 renderTemplate(tripInfoElement, createTripCostTemplate(points), 'beforeend');
-renderTemplate(eventsElement, createTripSortTemplate(), 'beforeend');
-renderTemplate(eventsElement, createTripListTemplate(), 'beforeend');
+renderElement(eventsElement, new TripSortView().getElement(), RenderPosition.BEFOREEND);
 
-const eventListElement = pageMainElement.querySelector('.trip-events__list');
+const tripListComponent = new TripListView();
+renderElement(eventsElement, tripListComponent.getElement(), RenderPosition.BEFOREEND);
 
-renderTemplate(eventListElement, createСreationPointTemplate(), 'beforeend');
-renderTemplate(eventListElement, createPointEditTemplate(points[0]), 'afterbegin');
+renderElement(tripListComponent.getElement(), new CreationPointView().getElement(), RenderPosition.BEFOREEND);
+renderTemplate(tripListComponent.getElement(), createPointEditTemplate(points[0]), 'afterbegin');
 
 for(let i = 1; i < POINT_COUNT; i++) {
-  renderTemplate(eventListElement, createPointTemplate(points[i]), 'beforeend');
+  renderTemplate(tripListComponent.getElement(), createPointTemplate(points[i]), 'beforeend');
 }
