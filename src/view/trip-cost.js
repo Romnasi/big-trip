@@ -7,7 +7,7 @@ const countOfferPrice = (offers) => {
 // Не считает в онлайне (при кликах по офферам и изменении цен в форме - ничего не изменится) нужно вешать обработчики
 // При подсчете не учитывает форму создания, т.к. там нет живых данных
 const getPrice = (points) => {
-  const pointPrice = points.reduce((total, point) => total + parseInt(point.price, 10), 0);
+  const pointPrice = points.reduce((total, point) => total + point.price, 0);
   const addedOfferPrice = points.reduce((total, point) => total + countOfferPrice(point.addedOffers), 0);
   return pointPrice + addedOfferPrice;
 };
