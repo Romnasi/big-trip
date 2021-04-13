@@ -3,13 +3,9 @@ import {getTripDuration} from './../format-date.js';
 
 const MAX_COUNT_CITY = 3;
 
-const getUniqueCities = (points) => {
-  return [...new Set(points.map((point) => point.city))];
-};
-
 
 const getTitle = (points) => {
-  let cities = getUniqueCities(points);
+  let cities = [...new Set(points.map((point) => point.city))];
   const firstCity = cities[0];
   const lastCity = cities[cities.length - 1];
 
