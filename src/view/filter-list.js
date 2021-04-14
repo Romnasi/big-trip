@@ -1,6 +1,6 @@
 import {createElement} from './../utils.js';
 
-const createEventsFilter = () => {
+const createFilterList = () => {
   return `<form class="trip-filters" action="#" method="get">
     <div class="trip-filters__filter">
       <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
@@ -22,13 +22,13 @@ const createEventsFilter = () => {
 };
 
 
-export default class EventsFilter {
+export default class FilterList {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createEventsFilter();
+    return createFilterList();
   }
 
   getElement() {
