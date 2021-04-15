@@ -1,4 +1,6 @@
-export const createСreationPointTemplate = () => {
+import {createElement} from './../utils.js';
+
+const createСreationPointTemplate = () => {
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -167,3 +169,26 @@ export const createСreationPointTemplate = () => {
     </form>
   </li>`;
 };
+
+
+export default class CreationPoint {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createСreationPointTemplate();
+  }
+
+  getElement() {
+    if(!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

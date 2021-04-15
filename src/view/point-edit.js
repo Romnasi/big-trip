@@ -1,3 +1,4 @@
+import {createElement} from './../utils.js';
 import {offers} from './../mock/point-data.js';
 import {formatDate} from './../format-date.js';
 
@@ -66,9 +67,9 @@ const createControlsPoint = (type) => {
 };
 
 
-export const createPointEditTemplate = (points) => {
+const createPointEditTemplate = (point) => {
 
-  const {type, city, description, photos, addedOffers, price, date: { dateTo, dateFrom }} = points;
+  const {type, city, description, photos, addedOffers, price, date: { dateTo, dateFrom }} = point;
 
 
   return `<li class="trip-events__item">
@@ -77,7 +78,7 @@ export const createPointEditTemplate = (points) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -134,3 +135,27 @@ export const createPointEditTemplate = (points) => {
     </form>
   </li>`;
 };
+
+
+export default class PointEdit {
+  constructor(point) {
+    this._point = point;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPointEditTemplate(this._point);
+  }
+
+  getElement() {
+    if(!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

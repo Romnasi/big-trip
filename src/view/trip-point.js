@@ -1,3 +1,4 @@
+import {createElement} from './../utils.js';
 import {getDuration} from './../format-date.js';
 import {getDayOfMonth} from './../format-date.js';
 import {getDatetime} from './../format-date.js';
@@ -26,9 +27,9 @@ const getOfferList = (addedOffers) => addedOffers === null ? '' : createOffersLi
 const checkFavorite = (isFavorite) => isFavorite === false ? '' : 'event__favorite-btn--active';
 
 
-export const createPointTemplate = (points) => {
+const createPointTemplate = (point) => {
 
-  const {type, city, addedOffers, date: { dateTo, dateFrom }, isFavorite, price} = points;
+  const {type, city, addedOffers, date: { dateTo, dateFrom }, isFavorite, price} = point;
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -61,3 +62,27 @@ export const createPointTemplate = (points) => {
     </div>
   </li>`;
 };
+
+
+export default class Point {
+  constructor(point) {
+    this._point = point;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPointTemplate(this._point);
+  }
+
+  getElement() {
+    if(!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

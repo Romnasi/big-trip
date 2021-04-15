@@ -140,7 +140,7 @@ const generateAddedOffer = (type) => {
 
   if (currentOfers !== null) {
     const addedOffers = [];
-    const maxCount = getRandomInteger(0, currentOfers.length - 1);
+    const maxCount = getRandomInteger(1, currentOfers.length - 1);
     for( let i = 0; i < maxCount; i++) {
       addedOffers.push(offers[type][i]);
     }

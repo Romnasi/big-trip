@@ -1,15 +1,12 @@
+import {createElement} from './../utils.js';
 import {getTripDuration} from './../format-date.js';
 
 
 const MAX_COUNT_CITY = 3;
 
-const getUniqueCities = (points) => {
-  return [...new Set(points.map((point) => point.city))];
-};
-
 
 const getTitle = (points) => {
-  let cities = getUniqueCities(points);
+  let cities = [...new Set(points.map((point) => point.city))];
   const firstCity = cities[0];
   const lastCity = cities[cities.length - 1];
 
@@ -24,7 +21,7 @@ const getTitle = (points) => {
 };
 
 
-export const createTripInfoTemplate = (points) => {
+const createTripInfoTemplate = (points) => {
 
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
@@ -34,3 +31,27 @@ export const createTripInfoTemplate = (points) => {
     </div>
   </section>`;
 };
+
+
+export default class TripInfo {
+  constructor(points) {
+    this._points = points;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripInfoTemplate(this._points);
+  }
+
+  getElement() {
+    if(!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
