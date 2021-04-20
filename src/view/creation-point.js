@@ -1,4 +1,4 @@
-import {createElement} from './../utils.js';
+import AbstractView from './abstract.js';
 
 const createСreationPointTemplate = () => {
   return `<li class="trip-events__item">
@@ -171,24 +171,8 @@ const createСreationPointTemplate = () => {
 };
 
 
-export default class CreationPoint {
-  constructor() {
-    this._element = null;
-  }
-
+export default class CreationPoint extends AbstractView {
   getTemplate() {
     return createСreationPointTemplate();
-  }
-
-  getElement() {
-    if(!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
