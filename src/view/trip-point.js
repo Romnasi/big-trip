@@ -1,9 +1,9 @@
 import AbstractView from './abstract.js';
-import {getDuration} from './../format-date.js';
-import {getDayOfMonth} from './../format-date.js';
-import {getDatetime} from './../format-date.js';
-import {getHoursMinutes} from './../format-date.js';
-import {getDatetimeWithHM} from './../format-date.js';
+import {getDuration} from './../utils/format-date.js';
+import {getDayOfMonth} from './../utils/format-date.js';
+import {getDatetime} from './../utils/format-date.js';
+import {getHoursMinutes} from './../utils/format-date.js';
+import {getDatetimeWithHM} from './../utils/format-date.js';
 
 
 const createOffers = (addedOffers) => {

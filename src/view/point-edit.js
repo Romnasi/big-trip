@@ -1,6 +1,6 @@
 import AbstractView from './abstract.js';
 import {offers} from './../mock/point-data.js';
-import {formatDate} from './../format-date.js';
+import {formatDate} from './../utils/format-date.js';
 
 
 const getPhotoList = (photos) => {
