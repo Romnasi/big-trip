@@ -1,9 +1,9 @@
-import {createElement} from './../utils.js';
-import {getDuration} from './../format-date.js';
-import {getDayOfMonth} from './../format-date.js';
-import {getDatetime} from './../format-date.js';
-import {getHoursMinutes} from './../format-date.js';
-import {getDatetimeWithHM} from './../format-date.js';
+import AbstractView from './abstract.js';
+import {getDuration} from './../utils/format-date.js';
+import {getDayOfMonth} from './../utils/format-date.js';
+import {getDatetime} from './../utils/format-date.js';
+import {getHoursMinutes} from './../utils/format-date.js';
+import {getDatetimeWithHM} from './../utils/format-date.js';
 
 
 const createOffers = (addedOffers) => {
@@ -64,25 +64,25 @@ const createPointTemplate = (point) => {
 };
 
 
-export default class Point {
+export default class Point extends AbstractView {
   constructor(point) {
+    super();
     this._point = point;
-    this._element = null;
+
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
     return createPointTemplate(this._point);
   }
 
-  getElement() {
-    if(!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
   }
 }

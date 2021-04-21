@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {getQuotientWithoutRemainder} from './utils.js';
+import {getQuotientWithoutRemainder} from './common.js';
 
 
 const HOUR_IN_MINUTES = 60;

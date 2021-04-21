@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import {getRandomInteger} from './../utils.js';
-import {getRandomEl} from './../utils.js';
+import {getRandomInteger} from './../utils/common.js';
+import {getRandomEl} from './../utils/common.js';
 
 
 const DESC_MIN_COUNT = 1;

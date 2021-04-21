@@ -9,7 +9,7 @@ import PointEditView from './view/point-edit.js';
 import PointView from './view/trip-point.js';
 import NoPointView from './view/no-point.js';
 import {generatePoint} from './mock/point-data.js';
-import {render, RenderPosition} from './utils.js';
+import {render, RenderPosition, replace} from './utils/render.js';
 
 const POINT_COUNT = 20;
 const points = new Array(POINT_COUNT).fill().map(() => generatePoint());
@@ -27,11 +27,11 @@ const renderPoint = (pointListElement, point) => {
   const pointEditComponent = new PointEditView(point);
 
   const replacePointToForm = () => {
-    pointListElement.replaceChild(pointEditComponent.getElement(), pointComponent.getElement());
+    replace(pointEditComponent, pointComponent);
   };
 
   const replaceFormToPoint = () => {
-    pointListElement.replaceChild(pointComponent.getElement(), pointEditComponent.getElement());
+    replace(pointComponent, pointEditComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -42,41 +42,40 @@ const renderPoint = (pointListElement, point) => {
     }
   };
 
-  pointComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+  pointComponent.setEditClickHandler(() => {
     replacePointToForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  pointEditComponent.getElement().querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  pointEditComponent.setFormSubmitHandler(() => {
     replaceFormToPoint();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  render(pointListElement, pointComponent.getElement(), RenderPosition.BEFOREEND);
+  render(pointListElement, pointComponent, RenderPosition.BEFOREEND);
 };
 
 
-render(navigationElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
-render(filtersElement, new FilterListView().getElement(), RenderPosition.BEFOREEND);
+render(navigationElement, new SiteMenuView(), RenderPosition.BEFOREEND);
+render(filtersElement, new FilterListView(), RenderPosition.BEFOREEND);
 
 // Header
 const tripInfoComponent = new TripInfoView(points);
-render(tripMainElement, tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
-render(tripInfoComponent.getElement(), new TripCostView(points).getElement(), RenderPosition.BEFOREEND);
-render(eventsElement, new TripSortView().getElement(), RenderPosition.BEFOREEND);
+render(tripMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN);
+render(tripInfoComponent, new TripCostView(points), RenderPosition.BEFOREEND);
+render(eventsElement, new TripSortView(), RenderPosition.BEFOREEND);
 
 // Trip list
 const tripListComponent = new TripListView();
 // По условию заглушка должна показываться, когда нет точек.
 if (points.length === 0) {
-  render(eventsElement, new NoPointView().getElement(), RenderPosition.BEFOREEND);
+  render(eventsElement, new NoPointView(), RenderPosition.BEFOREEND);
 } else {
-  render(eventsElement, tripListComponent.getElement(), RenderPosition.BEFOREEND);
-  render(tripListComponent.getElement(), new CreationPointView().getElement(), RenderPosition.BEFOREEND);
+  render(eventsElement, tripListComponent, RenderPosition.BEFOREEND);
+  render(tripListComponent, new CreationPointView(), RenderPosition.BEFOREEND);
 }
 
 
 for(let i = 0; i < POINT_COUNT; i++) {
-  renderPoint(tripListComponent.getElement(), points[i]);
+  renderPoint(tripListComponent, points[i]);
 }
