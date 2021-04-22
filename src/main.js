@@ -2,6 +2,7 @@ import SiteMenuView from './view/site-menu.js';
 import FilterListView from './view/filter-list.js';
 import TripInfoView from './view/trip-info.js';
 import TripCostView from './view/trip-cost.js';
+import TripView from './view/trip.js';
 import TripSortView from './view/trip-sort.js';
 import TripListView from './view/trip-list.js';
 import CreationPointView from './view/creation-point.js';
@@ -19,7 +20,7 @@ const tripMainElement = document.querySelector('.trip-main');
 const navigationElement = tripMainElement.querySelector('.trip-controls__navigation');
 const filtersElement = tripMainElement.querySelector('.trip-controls__filters');
 const pageMainElement = document.querySelector('.page-main');
-const eventsElement = pageMainElement.querySelector('.trip-events');
+const tripContainerElement = pageMainElement.querySelector('.page-body__container');
 
 
 const renderPoint = (pointListElement, point) => {
@@ -63,19 +64,25 @@ render(filtersElement, new FilterListView(), RenderPosition.BEFOREEND);
 const tripInfoComponent = new TripInfoView(points);
 render(tripMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN);
 render(tripInfoComponent, new TripCostView(points), RenderPosition.BEFOREEND);
-render(eventsElement, new TripSortView(), RenderPosition.BEFOREEND);
-
-// Trip list
-const tripListComponent = new TripListView();
-// По условию заглушка должна показываться, когда нет точек.
-if (points.length === 0) {
-  render(eventsElement, new NoPointView(), RenderPosition.BEFOREEND);
-} else {
-  render(eventsElement, tripListComponent, RenderPosition.BEFOREEND);
-  render(tripListComponent, new CreationPointView(), RenderPosition.BEFOREEND);
-}
 
 
-for(let i = 0; i < POINT_COUNT; i++) {
-  renderPoint(tripListComponent, points[i]);
-}
+const renderTrip = (tripContainer, tripPoints) => {
+  const tripComponent = new TripView();
+  render(tripContainer, tripComponent, RenderPosition.BEFOREEND);
+  render(tripComponent, new TripSortView(), RenderPosition.BEFOREEND);
+
+  const tripListComponent = new TripListView();
+  // // По условию заглушка должна показываться, когда нет точек.
+  if (points.length === 0) {
+    render(tripComponent, new NoPointView(), RenderPosition.BEFOREEND);
+  } else {
+    render(tripComponent, tripListComponent, RenderPosition.BEFOREEND);
+    render(tripListComponent, new CreationPointView(), RenderPosition.BEFOREEND);
+  }
+
+  tripPoints
+    .slice(0, POINT_COUNT)
+    .forEach((tripPoint) => renderPoint(tripListComponent, tripPoint));
+};
+
+renderTrip(tripContainerElement, points);
