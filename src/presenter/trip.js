@@ -1,11 +1,10 @@
 import TripView from './../view/trip.js';
 import SortView from './../view/sort.js';
-import TripListView from './../view/trip-list.js';
+import PointListView from './../view/point-list.js';
 import CreationPointView from './../view/creation-point.js';
-import PointEditView from './../view/point-edit.js';
-import PointView from './../view/trip-point.js';
 import NoPointView from './../view/no-point.js';
-import {render, RenderPosition, replace} from './../utils/render.js';
+import PointPresenter from './point.js';
+import {render, RenderPosition} from './../utils/render.js';
 
 
 export default class Trip {
@@ -14,8 +13,9 @@ export default class Trip {
 
     this._tripComponent = new TripView();
     this._sortComponent = new SortView();
-    this._tripListComponent = new TripListView();
+    this._pointListComponent = new PointListView();
     this._noPointComponent = new NoPointView();
+    this._creationPointComponent = new CreationPointView();
   }
 
 
@@ -23,7 +23,7 @@ export default class Trip {
     this._tripPoints = tripPoints.slice();
 
     render(this._tripContainer, this._tripComponent, RenderPosition.BEFOREEND);
-    render(this._tripComponent, this._tripListComponent, RenderPosition.BEFOREEND);
+    render(this._tripComponent, this._pointListComponent, RenderPosition.BEFOREEND);
 
     this._renderTrip();
   }
@@ -35,46 +35,13 @@ export default class Trip {
 
 
   _renderCreationPoint() {
-    const creationPointComponent = new CreationPointView();
-    render(this._tripListComponent, creationPointComponent, RenderPosition.BEFOREEND);
+    render(this._pointListComponent, this._creationPointComponent, RenderPosition.BEFOREEND);
   }
 
 
   _renderPoint(point) {
-    const pointComponent = new PointView(point);
-    const pointEditComponent = new PointEditView(point);
-
-    const replacePointToForm = () => {
-      replace(pointEditComponent, pointComponent);
-    };
-
-
-    const replaceFormToPoint = () => {
-      replace(pointComponent, pointEditComponent);
-    };
-
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        replaceFormToPoint();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-
-
-    pointComponent.setEditClickHandler(() => {
-      replacePointToForm();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-
-    pointEditComponent.setFormSubmitHandler(() => {
-      replaceFormToPoint();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    render(this._tripListComponent, pointComponent, RenderPosition.BEFOREEND);
+    const pointPresenter = new PointPresenter(this._pointListComponent);
+    pointPresenter.init(point);
   }
 
 
