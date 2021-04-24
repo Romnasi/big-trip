@@ -1,7 +1,6 @@
 import PointView from './../view/point.js';
-import CreationPointView from './../view/creation-point.js';
 import PointEditView from './../view/point-edit.js';
-import {render, RenderPosition, replace} from './../utils/render.js';
+import {render, RenderPosition, replace, remove} from './../utils/render.js';
 
 
 export default class Point {
@@ -10,7 +9,6 @@ export default class Point {
 
     this._pointComponent = null;
     this._pointEditComponent = null;
-    this._creationPointComponent = null;
 
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
@@ -21,14 +19,36 @@ export default class Point {
   init(point) {
     this._point = point;
 
+    const prevPointComponent = this._pointComponent;
+    const prevPointEditComponent = this._pointEditComponent;
+
     this._pointComponent = new PointView(point);
     this._pointEditComponent = new PointEditView(point);
-    this._creationPointComponent = new CreationPointView();
 
     this._pointComponent.setEditClickHandler(this._handleEditClick);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
 
-    render(this._pointListComponent, this._pointComponent, RenderPosition.BEFOREEND);
+    if (prevPointComponent === null || prevPointEditComponent === null) {
+      render(this._pointListComponent, this._pointComponent, RenderPosition.BEFOREEND);
+      return;
+    }
+
+    if (this._pointListComponent.getElement().contains(prevPointComponent.getElement())) {
+      replace(this._pointComponent, prevPointComponent);
+    }
+
+    if (this._pointListComponent.getElement().contains(prevPointEditComponent.getElement())) {
+      replace(this._pointEditComponent, prevPointEditComponent);
+    }
+
+    remove(prevPointComponent);
+    remove(prevPointEditComponent);
+  }
+
+
+  destroy() {
+    remove(this._pointComponent);
+    remove(this._pointEditComponent);
   }
 
 
