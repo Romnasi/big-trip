@@ -4,13 +4,15 @@ import {render, RenderPosition, replace, remove} from './../utils/render.js';
 
 
 export default class Point {
-  constructor(pointListComponent) {
+  constructor(pointListComponent, changeData) {
     this._pointListComponent = pointListComponent;
+    this._changeData = changeData;
 
     this._pointComponent = null;
     this._pointEditComponent = null;
 
     this._handleEditClick = this._handleEditClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
@@ -26,6 +28,7 @@ export default class Point {
     this._pointEditComponent = new PointEditView(point);
 
     this._pointComponent.setEditClickHandler(this._handleEditClick);
+    this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -77,7 +80,21 @@ export default class Point {
   }
 
 
-  _handleFormSubmit() {
+  _handleFavoriteClick() {
+    this._changeData(
+      Object.assign(
+        {},
+        this._point,
+        {
+          isFavorite: !this._point.isFavorite,
+        },
+      ),
+    );
+  }
+
+
+  _handleFormSubmit(point) {
+    this._changeData(point);
     this._replaceFormToPoint();
   }
 }

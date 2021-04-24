@@ -4,6 +4,7 @@ import PointListView from './../view/point-list.js';
 import CreationPointView from './../view/creation-point.js';
 import NoPointView from './../view/no-point.js';
 import PointPresenter from './point.js';
+import {updateItem} from './../utils/common.js';
 import {render, RenderPosition} from './../utils/render.js';
 
 
@@ -17,6 +18,8 @@ export default class Trip {
     this._pointListComponent = new PointListView();
     this._noPointComponent = new NoPointView();
     this._creationPointComponent = new CreationPointView();
+
+    this._handlePointChange = this._handlePointChange.bind(this);
   }
 
 
@@ -27,6 +30,12 @@ export default class Trip {
     render(this._tripComponent, this._pointListComponent, RenderPosition.BEFOREEND);
 
     this._renderTrip();
+  }
+
+
+  _handlePointChange(updatedPoint) {
+    this._tripPoints = updateItem(this._tripPoints, updatedPoint);
+    this._pointPresenter[updatedPoint.id].init(updatedPoint);
   }
 
 
@@ -41,7 +50,7 @@ export default class Trip {
 
 
   _renderPoint(point) {
-    const pointPresenter = new PointPresenter(this._pointListComponent);
+    const pointPresenter = new PointPresenter(this._pointListComponent, this._handlePointChange);
     pointPresenter.init(point);
     this._pointPresenter[point.id] = pointPresenter;
   }
