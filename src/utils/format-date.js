@@ -12,10 +12,13 @@ export const formatDate = (date) => {
 };
 
 
-// trip-point.js
+// utils/sort.js
+export const getDiffDate = (timeA, timeB, format = 'minute') => {
+  return dayjs(timeA).diff(dayjs(timeB), format);
+};
 
-// Исходим из того, что данные уже остортированы от старого к новому
-// Если с сервера будут приходить другие данные необходима функция сортировки
+
+// trip-point.js
 export const getTripDuration = (points) => {
   const dateToList = points.map((point) => point.date.dateTo);
   const dateFromList = points.map((point) => point.date.dateTo);
@@ -75,9 +78,7 @@ const getDurationFormat = (min) => {
 
 
 export const getDuration = (dateTo, dateFrom) => {
-  const dateStart = dayjs(dateTo);
-  const dateFinish = dayjs(dateFrom);
-  const durationInMin = dateFinish.diff(dateStart, 'minute');
+  const durationInMin = getDiffDate(dateFrom, dateTo);
 
   return getDurationFormat(durationInMin);
 };
