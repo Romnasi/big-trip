@@ -3,59 +3,57 @@ import {offers} from './../mock/point-data.js';
 import {formatDate} from './../utils/format-date.js';
 
 
-const getPhotoList = (photos) => {
+const getPhotoList = (photos, isPhotos) => {
   return `<div class="event__photos-container">
     <div class="event__photos-tape">
-      ${photos !== null ? photos.map((url) => `<img class="event__photo" src="${url}" alt="Event photo">`).join('') : '' }
+      ${isPhotos ? photos.map((url) => `<img class="event__photo" src="${url}" alt="Event photo">`).join('') : '' }
     </div>
   </div>`;
 };
 
 
-const checkOfferAdded = (currentName, addedOffers) => {
-  return addedOffers !== null
+const checkOfferAdded = (currentName, addedOffers, isAddedOffers) => {
+  return isAddedOffers
     ? Object.values(addedOffers).map(({name}) => name).includes(currentName)
-    : '';
+    : false;
 };
 
 
-const getTypeOffers = (type, addedOffers) => {
+const getTypeOffers = (type, addedOffers, isAddedOffers) => {
   const getNameWithoutSpace = (nameWithSpace) => {
     return nameWithSpace.toLowerCase().replace(/ /g, '-');
   };
   let nameWithoutSpace = '';
 
-  return offers[type] !== null
-    ? Object.values(offers[type]).map(({name, price}) => `<div class="event__offer-selector">
+  return Object.values(offers[type]).map(({name, price}) => `<div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden"
-      id="${nameWithoutSpace = getNameWithoutSpace(name)}-1" type="checkbox" name="${nameWithoutSpace}" ${checkOfferAdded(name, addedOffers) ? 'checked' : ''}>
+      id="${nameWithoutSpace = getNameWithoutSpace(name)}-1" type="checkbox" name="${nameWithoutSpace}" ${checkOfferAdded(name, addedOffers, isAddedOffers) ? 'checked' : ''}>
       <label class="event__offer-label" for="${nameWithoutSpace}-1">
         <span class="event__offer-title">${name}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${price}</span>
       </label>
-    </div>`).join('')
-    : '';
+    </div>`).join('');
 };
 
 
-const getOfferList = (type, addedOffers) => {
-  return offers[type] !== null
+const getOfferList = (type, addedOffers, isOffers, isAddedOffers) => {
+  return isOffers
     ? `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
     <div class="event__available-offers">
-      ${getTypeOffers(type, addedOffers)}
+      ${getTypeOffers(type, addedOffers, isAddedOffers)}
     </div>
   </section>`
     : '';
 };
 
 
-const createControlsPoint = (type) => {
+const createControlsPoint = (type, isOffers) => {
   let typeToLowerCase = '';
 
-  return offers !== null
+  return isOffers
     ? Object.keys(offers).map((currentType) => `<div class="event__type-item">
               <input id="event-type-${typeToLowerCase = currentType.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio"
                   name="event-type" value="${typeToLowerCase}"${currentType === type ? ' checked' : ''}>
@@ -67,10 +65,23 @@ const createControlsPoint = (type) => {
 };
 
 
-const createPointEditTemplate = (point) => {
+const createPointEditTemplate = (data) => {
 
-  const {type, city, description, photos, addedOffers, price, date: { dateTo, dateFrom }} = point;
-
+  const {
+    type,
+    city,
+    description,
+    photos,
+    addedOffers,
+    price,
+    isOffers,
+    isAddedOffers,
+    isPhotos,
+    date: {
+      dateTo,
+      dateFrom,
+    },
+  } = data;
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -85,7 +96,7 @@ const createPointEditTemplate = (point) => {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-              ${createControlsPoint(type)}
+              ${createControlsPoint(type, isOffers)}
             </fieldset>
           </div>
         </div>
@@ -125,11 +136,11 @@ const createPointEditTemplate = (point) => {
         </button>
       </header>
       <section class="event__details">
-        ${getOfferList(type, addedOffers)}
+        ${getOfferList(type, addedOffers, isOffers, isAddedOffers)}
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${description}</p>
-          ${getPhotoList(photos)}
+          ${getPhotoList(photos, isPhotos)}
         </section>
       </section>
     </form>
@@ -140,22 +151,48 @@ const createPointEditTemplate = (point) => {
 export default class PointEdit extends AbstractView {
   constructor(point) {
     super();
-    this._point = point;
+    this._data = PointEdit.parsePointToData(point);
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
-    return createPointEditTemplate(this._point);
+    return createPointEditTemplate(this._data);
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._point);
+    this._callback.formSubmit(PointEdit.parsePointToData(this._data));
   }
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
+  }
+
+
+  static parsePointToData(point) {
+    const {type, addedOffers, photos} = point;
+
+    return Object.assign(
+      {},
+      point,
+      {
+        isOffers: offers[type] !== null,
+        isAddedOffers: addedOffers !== null,
+        isPhotos: photos !== null,
+      },
+    );
+  }
+
+
+  static parseDataToPoint(data) {
+    data = Object.assign({}, data);
+
+    delete data.isOffers;
+    delete data.isAddedOffers;
+    delete data.isPhotos;
+
+    return data;
   }
 }
