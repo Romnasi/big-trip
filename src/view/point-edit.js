@@ -1,12 +1,15 @@
 import AbstractView from './abstract.js';
 import {offers} from './../mock/point-data.js';
+import {destinations} from './../mock/point-data.js';
 import {formatDate} from './../utils/format-date.js';
+import {getDescByCity} from './../utils/common.js';
+import {getPhotosByCity} from './../utils/common.js';
 
 
 const getPhotoList = (photos, isPhotos) => {
   return `<div class="event__photos-container">
     <div class="event__photos-tape">
-      ${isPhotos ? photos.map((url) => `<img class="event__photo" src="${url}" alt="Event photo">`).join('') : '' }
+      ${isPhotos ? photos.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`).join('') : '' }
     </div>
   </div>`;
 };
@@ -19,13 +22,15 @@ const checkOfferAdded = (currentName, addedOffers, isAddedOffers) => {
 };
 
 
-const getTypeOffers = (type, addedOffers, isAddedOffers) => {
+const getTypeOffers = (offerType, addedOffers, isAddedOffers) => {
   const getNameWithoutSpace = (nameWithSpace) => {
     return nameWithSpace.toLowerCase().replace(/ /g, '-');
   };
   let nameWithoutSpace = '';
 
-  return Object.values(offers[type]).map(({name, price}) => `<div class="event__offer-selector">
+
+  return offers[offerType]
+    ? Object.values(offers[offerType]).map(({name, price}) => `<div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden"
       id="${nameWithoutSpace = getNameWithoutSpace(name)}-1" type="checkbox" name="${nameWithoutSpace}" ${checkOfferAdded(name, addedOffers, isAddedOffers) ? 'checked' : ''}>
       <label class="event__offer-label" for="${nameWithoutSpace}-1">
@@ -33,12 +38,14 @@ const getTypeOffers = (type, addedOffers, isAddedOffers) => {
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${price}</span>
       </label>
-    </div>`).join('');
+    </div>`).join('')
+    : '';
 };
 
 
 const getOfferList = (type, addedOffers, isOffers, isAddedOffers) => {
-  return isOffers
+
+  return offers[type]
     ? `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
@@ -49,19 +56,23 @@ const getOfferList = (type, addedOffers, isOffers, isAddedOffers) => {
     : '';
 };
 
+const getCities = () => Object.values(destinations).map(({name}) => name).slice();
+const cities = getCities();
+const getCityList = () => cities.map((city) => `<option value="${city}">`).join('');
+const cityList = getCityList();
 
-const createControlsPoint = (type, isOffers) => {
+
+const createControlsPoint = (type) => {
   let typeToLowerCase = '';
 
-  return isOffers
-    ? Object.keys(offers).map((currentType) => `<div class="event__type-item">
-              <input id="event-type-${typeToLowerCase = currentType.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio"
-                  name="event-type" value="${typeToLowerCase}"${currentType === type ? ' checked' : ''}>
-              <label class="event__type-label  event__type-label--${typeToLowerCase}" for="event-type-${typeToLowerCase}-1">${currentType}</label>
+  return Object.keys(offers).map((currentType) => `<div class="event__type-item">
+              <input id="event-type-${typeToLowerCase = currentType.toLowerCase()}-1" class="event__type-input visually-hidden"
+                  type="radio" name="event-type" value="${typeToLowerCase}"${currentType === type ? ' checked' : ''}>
+              <label class="event__type-label  event__type-label--${typeToLowerCase}"
+                  for="event-type-${typeToLowerCase}-1" data-control-type="${currentType}">${currentType}</label>
             </div>
 
-            `).join('')
-    : '';
+            `).join('');
 };
 
 
@@ -69,19 +80,20 @@ const createPointEditTemplate = (data) => {
 
   const {
     type,
-    city,
-    description,
-    photos,
     addedOffers,
     price,
     isOffers,
     isAddedOffers,
     isPhotos,
+    photos,
     date: {
       dateTo,
       dateFrom,
     },
+    city,
+    description,
   } = data;
+
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -96,7 +108,7 @@ const createPointEditTemplate = (data) => {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-              ${createControlsPoint(type, isOffers)}
+              ${createControlsPoint(type)}
             </fieldset>
           </div>
         </div>
@@ -105,11 +117,10 @@ const createPointEditTemplate = (data) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1"
+              type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+            ${cityList}
           </datalist>
         </div>
 
@@ -136,7 +147,7 @@ const createPointEditTemplate = (data) => {
         </button>
       </header>
       <section class="event__details">
-        ${getOfferList(type, addedOffers, isOffers, isAddedOffers)}
+        ${getOfferList(type, addedOffers, isOffers, isAddedOffers, isOffers)}
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${description}</p>
@@ -154,11 +165,90 @@ export default class PointEdit extends AbstractView {
     this._data = PointEdit.parsePointToData(point);
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._typePointListHandler = this._typePointListHandler.bind(this);
+    this._destinationListHandler = this._destinationListHandler.bind(this);
+    this._setInnerHandlers();
   }
+
 
   getTemplate() {
     return createPointEditTemplate(this._data);
   }
+
+
+  updateData(update) {
+    if(!update) {
+      return;
+    }
+
+    this._data = Object.assign(
+      {},
+      this._data,
+      update,
+    );
+
+    this.updateElement();
+  }
+
+
+  updateElement() {
+    const prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
+
+    this.restoreHandlers();
+  }
+
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector('.event__type-group')
+      .addEventListener('click', this._typePointListHandler);
+    this.getElement()
+      .querySelector('.event__input--destination')
+      .addEventListener('change', this._destinationListHandler);
+  }
+
+
+  _typePointListHandler(evt) {
+    evt.preventDefault();
+    this.getElement()
+      .querySelector(`#${evt.target.getAttribute('for')}`)
+      .checked = true;
+    const type = evt.target.dataset.controlType;
+
+    this.updateData({
+      type,
+    });
+  }
+
+  _destinationListHandler(evt) {
+    evt.preventDefault();
+    const city = evt.target.value;
+
+    if (!cities.find((current) => current === city)) {
+      evt.target.setCustomValidity('Выберите город из предложенного списка');
+      return;
+    }
+
+    this.updateData({
+      city,
+      description: getDescByCity(city, destinations),
+      photos: getPhotosByCity(city, destinations),
+    });
+
+  }
+
 
   _formSubmitHandler(evt) {
     evt.preventDefault();

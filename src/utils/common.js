@@ -1,3 +1,6 @@
+export const getDescByCity = (city, destinations) => destinations.find((destination) => destination.name == city).description;
+export const getPhotosByCity = (city, destinations) => destinations.find((destination) => destination.name == city).pictures;
+
 // mock
 export const getRandomInteger = (min, max) => {
   min = Math.ceil(min);
