@@ -1,4 +1,4 @@
-import AbstractView from './abstract.js';
+import SmartView from './smart.js';
 import {offers} from './../mock/point-data.js';
 import {destinations} from './../mock/point-data.js';
 import {formatDate} from './../utils/format-date.js';
@@ -159,7 +159,7 @@ const createPointEditTemplate = (data) => {
 };
 
 
-export default class PointEdit extends AbstractView {
+export default class PointEdit extends SmartView {
   constructor(point) {
     super();
     this._data = PointEdit.parsePointToData(point);
@@ -174,38 +174,6 @@ export default class PointEdit extends AbstractView {
 
   getTemplate() {
     return createPointEditTemplate(this._data);
-  }
-
-
-  updateData(update, justDataUpdating) {
-    if(!update) {
-      return;
-    }
-
-    this._data = Object.assign(
-      {},
-      this._data,
-      update,
-    );
-
-    if (justDataUpdating) {
-      return;
-    }
-
-    this.updateElement();
-  }
-
-
-  updateElement() {
-    const prevElement = this.getElement();
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.getElement();
-
-    parent.replaceChild(newElement, prevElement);
-
-    this.restoreHandlers();
   }
 
 
