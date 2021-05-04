@@ -32,7 +32,7 @@ const getTypeOffers = (offerType, addedOffers, isAddedOffers) => {
   return offers[offerType]
     ? Object.values(offers[offerType]).map(({name, price}) => `<div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden"
-      id="${nameWithoutSpace = getNameWithoutSpace(name)}-1" type="checkbox" name="${nameWithoutSpace}" ${checkOfferAdded(name, addedOffers, isAddedOffers) ? 'checked' : ''}>
+      id="${nameWithoutSpace = getNameWithoutSpace(name)}-1" type="checkbox" name="${nameWithoutSpace}" value="${name}" ${checkOfferAdded(name, addedOffers, isAddedOffers) ? 'checked' : ''}>
       <label class="event__offer-label" for="${nameWithoutSpace}-1">
         <span class="event__offer-title">${name}</span>
         &plus;&euro;&nbsp;
@@ -167,6 +167,7 @@ export default class PointEdit extends AbstractView {
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._typePointListHandler = this._typePointListHandler.bind(this);
     this._destinationListHandler = this._destinationListHandler.bind(this);
+    this._addedOffersChangeHandler = this._addedOffersChangeHandler.bind(this);
     this._setInnerHandlers();
   }
 
@@ -176,7 +177,7 @@ export default class PointEdit extends AbstractView {
   }
 
 
-  updateData(update) {
+  updateData(update, justDataUpdating) {
     if(!update) {
       return;
     }
@@ -186,6 +187,10 @@ export default class PointEdit extends AbstractView {
       this._data,
       update,
     );
+
+    if (justDataUpdating) {
+      return;
+    }
 
     this.updateElement();
   }
@@ -217,6 +222,12 @@ export default class PointEdit extends AbstractView {
     this.getElement()
       .querySelector('.event__input--destination')
       .addEventListener('change', this._destinationListHandler);
+
+    if (this._data.isOffers) {
+      this.getElement()
+        .querySelector('.event__available-offers')
+        .addEventListener('change', this._addedOffersChangeHandler);
+    }
   }
 
 
@@ -229,6 +240,9 @@ export default class PointEdit extends AbstractView {
 
     this.updateData({
       type,
+      addedOffers: null,
+      isOffers: offers[type] !== null,
+      isAddedOffers: false,
     });
   }
 
@@ -254,6 +268,39 @@ export default class PointEdit extends AbstractView {
     evt.preventDefault();
     this._callback.formSubmit(PointEdit.parsePointToData(this._data));
   }
+
+
+  _changeAddedOffers(target) {
+    const addedOffers = this._data.addedOffers ? this._data.addedOffers.slice() : [];
+
+    if (!target.checked) {
+      const index = addedOffers.map(({name}) => name.indexOf(target.value)).indexOf(0);
+      addedOffers.splice(index, 1);
+    } else {
+      const currentOfferSet = {};
+      offers[this._data.type].map(({name, price}) => currentOfferSet[name] = price);
+
+      const clickedOffers = {
+        name: target.value,
+        price: currentOfferSet[target.value],
+      };
+
+      addedOffers.push(clickedOffers);
+    }
+
+    return addedOffers;
+  }
+
+
+  _addedOffersChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      addedOffers: this._changeAddedOffers(evt.target),
+    },
+    true,
+    );
+  }
+
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
