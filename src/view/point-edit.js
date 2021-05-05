@@ -65,10 +65,8 @@ const getOfferList = (type, addedOffers, isOffers, isAddedOffers) => {
     : '';
 };
 
-const getCities = () => Object.values(destinations).map(({name}) => name).slice();
-const cities = getCities();
-const getCityList = () => cities.map((city) => `<option value="${city}">`).join('');
-const cityList = getCityList();
+
+const getCityList = (cities) => cities.map((city) => `<option value="${city}">`).join('');
 
 
 const createControlsPoint = (type) => {
@@ -91,16 +89,17 @@ const createPointEditTemplate = (data) => {
     type,
     addedOffers,
     price,
+    photos,
+    city,
+    cities,
+    description,
     isOffers,
     isAddedOffers,
     isPhotos,
-    photos,
     date: {
       dateTo,
       dateFrom,
     },
-    city,
-    description,
   } = data;
 
 
@@ -129,7 +128,7 @@ const createPointEditTemplate = (data) => {
           <input class="event__input  event__input--destination" id="event-destination-1"
               type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
-            ${cityList}
+            ${getCityList(cities)}
           </datalist>
         </div>
 
@@ -285,7 +284,7 @@ export default class PointEdit extends SmartView {
     evt.preventDefault();
     const city = evt.target.value;
 
-    if (!cities.find((current) => current === city)) {
+    if (!this._data.cities.find((current) => current === city)) {
       evt.target.setCustomValidity('Выберите город из предложенного списка');
       return;
     }

@@ -261,6 +261,10 @@ const generateAddedOffer = (type) => {
 };
 
 
+const getCities = () => Object.values(destinations).map(({name}) => name).slice();
+const cities = getCities();
+
+
 export const generatePoint = () => {
   const type = generateType();
   const city = getRandomEl(destinations).name;
@@ -269,6 +273,7 @@ export const generatePoint = () => {
     id: nanoid(),
     type,
     city,
+    cities,
     description: getDescByCity(city, destinations),
     destination: getRandomEl(destinations, destinations),
     addedOffers: generateAddedOffer(type),
