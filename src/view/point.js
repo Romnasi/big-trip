@@ -29,7 +29,17 @@ const checkFavorite = (isFavorite) => isFavorite === false ? '' : 'event__favori
 
 const createPointTemplate = (point) => {
 
-  const {type, city, addedOffers, date: { dateTo, dateFrom }, isFavorite, price} = point;
+  const {
+    type,
+    addedOffers,
+    isFavorite,
+    price,
+    city,
+    date: {
+      dateTo,
+      dateFrom,
+    },
+  } = point;
 
   return `<li class="trip-events__item">
     <div class="event">

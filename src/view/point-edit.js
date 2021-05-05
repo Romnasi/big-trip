@@ -1,34 +1,41 @@
-import AbstractView from './abstract.js';
+import SmartView from './smart.js';
 import {offers} from './../mock/point-data.js';
+import {destinations} from './../mock/point-data.js';
 import {formatDate} from './../utils/format-date.js';
+import {getDescByCity} from './../utils/common.js';
+import {getPhotosByCity} from './../utils/common.js';
+import flatpickr from 'flatpickr';
+
+import './../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 
-const getPhotoList = (photos) => {
+const getPhotoList = (photos, isPhotos) => {
   return `<div class="event__photos-container">
     <div class="event__photos-tape">
-      ${photos !== null ? photos.map((url) => `<img class="event__photo" src="${url}" alt="Event photo">`).join('') : '' }
+      ${isPhotos ? photos.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`).join('') : '' }
     </div>
   </div>`;
 };
 
 
-const checkOfferAdded = (currentName, addedOffers) => {
-  return addedOffers !== null
+const checkOfferAdded = (currentName, addedOffers, isAddedOffers) => {
+  return isAddedOffers
     ? Object.values(addedOffers).map(({name}) => name).includes(currentName)
-    : '';
+    : false;
 };
 
 
-const getTypeOffers = (type, addedOffers) => {
+const getTypeOffers = (offerType, addedOffers, isAddedOffers) => {
   const getNameWithoutSpace = (nameWithSpace) => {
     return nameWithSpace.toLowerCase().replace(/ /g, '-');
   };
   let nameWithoutSpace = '';
 
-  return offers[type] !== null
-    ? Object.values(offers[type]).map(({name, price}) => `<div class="event__offer-selector">
+
+  return offers[offerType]
+    ? Object.values(offers[offerType]).map(({name, price}) => `<div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden"
-      id="${nameWithoutSpace = getNameWithoutSpace(name)}-1" type="checkbox" name="${nameWithoutSpace}" ${checkOfferAdded(name, addedOffers) ? 'checked' : ''}>
+      id="${nameWithoutSpace = getNameWithoutSpace(name)}-1" type="checkbox" name="${nameWithoutSpace}" value="${name}" ${checkOfferAdded(name, addedOffers, isAddedOffers) ? 'checked' : ''}>
       <label class="event__offer-label" for="${nameWithoutSpace}-1">
         <span class="event__offer-title">${name}</span>
         &plus;&euro;&nbsp;
@@ -39,37 +46,56 @@ const getTypeOffers = (type, addedOffers) => {
 };
 
 
-const getOfferList = (type, addedOffers) => {
-  return offers[type] !== null
+const getOfferList = (type, addedOffers, isOffers, isAddedOffers) => {
+
+  return offers[type]
     ? `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
     <div class="event__available-offers">
-      ${getTypeOffers(type, addedOffers)}
+      ${getTypeOffers(type, addedOffers, isAddedOffers)}
     </div>
   </section>`
     : '';
 };
 
+const getCities = () => Object.values(destinations).map(({name}) => name).slice();
+const cities = getCities();
+const getCityList = () => cities.map((city) => `<option value="${city}">`).join('');
+const cityList = getCityList();
+
 
 const createControlsPoint = (type) => {
   let typeToLowerCase = '';
 
-  return offers !== null
-    ? Object.keys(offers).map((currentType) => `<div class="event__type-item">
-              <input id="event-type-${typeToLowerCase = currentType.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio"
-                  name="event-type" value="${typeToLowerCase}"${currentType === type ? ' checked' : ''}>
-              <label class="event__type-label  event__type-label--${typeToLowerCase}" for="event-type-${typeToLowerCase}-1">${currentType}</label>
+  return Object.keys(offers).map((currentType) => `<div class="event__type-item">
+              <input id="event-type-${typeToLowerCase = currentType.toLowerCase()}-1" class="event__type-input visually-hidden"
+                  type="radio" name="event-type" value="${typeToLowerCase}"${currentType === type ? ' checked' : ''}>
+              <label class="event__type-label  event__type-label--${typeToLowerCase}"
+                  for="event-type-${typeToLowerCase}-1" data-control-type="${currentType}">${currentType}</label>
             </div>
 
-            `).join('')
-    : '';
+            `).join('');
 };
 
 
-const createPointEditTemplate = (point) => {
+const createPointEditTemplate = (data) => {
 
-  const {type, city, description, photos, addedOffers, price, date: { dateTo, dateFrom }} = point;
+  const {
+    type,
+    addedOffers,
+    price,
+    isOffers,
+    isAddedOffers,
+    isPhotos,
+    photos,
+    date: {
+      dateTo,
+      dateFrom,
+    },
+    city,
+    description,
+  } = data;
 
 
   return `<li class="trip-events__item">
@@ -94,11 +120,10 @@ const createPointEditTemplate = (point) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1"
+              type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+            ${cityList}
           </datalist>
         </div>
 
@@ -125,11 +150,11 @@ const createPointEditTemplate = (point) => {
         </button>
       </header>
       <section class="event__details">
-        ${getOfferList(type, addedOffers)}
+        ${getOfferList(type, addedOffers, isOffers, isAddedOffers, isOffers)}
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${description}</p>
-          ${getPhotoList(photos)}
+          ${getPhotoList(photos, isPhotos)}
         </section>
       </section>
     </form>
@@ -137,25 +162,219 @@ const createPointEditTemplate = (point) => {
 };
 
 
-export default class PointEdit extends AbstractView {
+export default class PointEdit extends SmartView {
   constructor(point) {
     super();
-    this._point = point;
+    this._data = PointEdit.parsePointToData(point);
+    this._datepickerTo = null;
+    this._datepickerFrom = null;
 
+    this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
+    this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._typePointListHandler = this._typePointListHandler.bind(this);
+    this._destinationListHandler = this._destinationListHandler.bind(this);
+    this._addedOffersChangeHandler = this._addedOffersChangeHandler.bind(this);
+
+    this._setInnerHandlers();
+    this._setDatepicker();
   }
+
+
+  reset(point) {
+    this.updateData(
+      PointEdit.parsePointToData(point),
+    );
+  }
+
 
   getTemplate() {
-    return createPointEditTemplate(this._point);
+    return createPointEditTemplate(this._data);
   }
+
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this._setDatepicker();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+
+  _setDatepicker() {
+    if (this._datepickerTo) {
+      this._datepickerTo.destroy();
+      this._datepickerTo = null;
+    }
+
+    if (this._datepickerFrom) {
+      this._datepickerFrom.destroy();
+      this._datepickerFrom = null;
+    }
+
+    if (this._data.date) {
+      this._datepickerTo = flatpickr(
+        this.getElement().querySelector('#event-start-time-1'),
+        {
+          dateFormat: 'd/m/Y H:i',
+          defaultDate: this._data.date.dateTo,
+          onChange: this._dateToChangeHandler,
+        },
+      );
+
+      this._datepickerFrom = flatpickr(
+        this.getElement().querySelector('#event-end-time-1'),
+        {
+          minDate: this._data.date.dateTo,
+          dateFormat: 'd/m/Y H:i',
+          defaultDate: this._data.date.dateFrom,
+          onChange: this._dateFromChangeHandler,
+        },
+      );
+    }
+  }
+
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector('.event__type-group')
+      .addEventListener('click', this._typePointListHandler);
+    this.getElement()
+      .querySelector('.event__input--destination')
+      .addEventListener('change', this._destinationListHandler);
+
+    if (this._data.isOffers) {
+      this.getElement()
+        .querySelector('.event__available-offers')
+        .addEventListener('change', this._addedOffersChangeHandler);
+    }
+  }
+
+
+  _typePointListHandler(evt) {
+    evt.preventDefault();
+    this.getElement()
+      .querySelector(`#${evt.target.getAttribute('for')}`)
+      .checked = true;
+    const type = evt.target.dataset.controlType;
+
+    this.updateData({
+      type,
+      addedOffers: null,
+      isOffers: offers[type] !== null,
+      isAddedOffers: false,
+    });
+  }
+
+  _destinationListHandler(evt) {
+    evt.preventDefault();
+    const city = evt.target.value;
+
+    if (!cities.find((current) => current === city)) {
+      evt.target.setCustomValidity('Выберите город из предложенного списка');
+      return;
+    }
+
+    this.updateData({
+      city,
+      description: getDescByCity(city, destinations),
+      photos: getPhotosByCity(city, destinations),
+    });
+
+  }
+
+
+  _dateToChangeHandler([userDate]) {
+    this.updateData({
+      date: Object.assign(
+        {},
+        this._data.date,
+        {
+          dateTo: userDate,
+        },
+      ),
+    });
+  }
+
+
+  _dateFromChangeHandler([userDate]) {
+    this.updateData({
+      date: Object.assign(
+        {},
+        this._data.date,
+        {
+          dateFrom: userDate,
+        },
+      ),
+    });
+  }
+
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._point);
+    this._callback.formSubmit(PointEdit.parsePointToData(this._data));
   }
+
+
+  _changeAddedOffers(target) {
+    const addedOffers = this._data.addedOffers ? this._data.addedOffers.slice() : [];
+
+    if (!target.checked) {
+      const index = addedOffers.map(({name}) => name.indexOf(target.value)).indexOf(0);
+      addedOffers.splice(index, 1);
+    } else {
+      const currentOfferSet = {};
+      offers[this._data.type].map(({name, price}) => currentOfferSet[name] = price);
+
+      const clickedOffers = {
+        name: target.value,
+        price: currentOfferSet[target.value],
+      };
+
+      addedOffers.push(clickedOffers);
+    }
+
+    return addedOffers;
+  }
+
+
+  _addedOffersChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      addedOffers: this._changeAddedOffers(evt.target),
+    },
+    true,
+    );
+  }
+
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
+  }
+
+
+  static parsePointToData(point) {
+    const {type, addedOffers, photos} = point;
+
+    return Object.assign(
+      {},
+      point,
+      {
+        isOffers: offers[type] !== null,
+        isAddedOffers: addedOffers !== null,
+        isPhotos: photos !== null,
+      },
+    );
+  }
+
+
+  static parseDataToPoint(data) {
+    data = Object.assign({}, data);
+
+    delete data.isOffers;
+    delete data.isAddedOffers;
+    delete data.isPhotos;
+
+    return data;
   }
 }

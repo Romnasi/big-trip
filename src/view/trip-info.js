@@ -6,13 +6,14 @@ const MAX_COUNT_CITY = 3;
 
 
 const getTitle = (points) => {
-  let cities = [...new Set(points.map((point) => point.city))];
+  let cities = points.map((point) => point.city);
   const firstCity = cities[0];
   const lastCity = cities[cities.length - 1];
+  const uniqCitiesCount = [...new Set(cities)].length;
 
-  if (cities.length > MAX_COUNT_CITY) {
+  if (uniqCitiesCount > MAX_COUNT_CITY) {
     cities = [firstCity, '...', lastCity].join(' &mdash; ');
-  } else if (cities.length <= MAX_COUNT_CITY && cities.length > 1) {
+  } else if (uniqCitiesCount <= MAX_COUNT_CITY && uniqCitiesCount > 1) {
     cities = [...cities].join(' &mdash; ');
   } else {
     cities = firstCity;

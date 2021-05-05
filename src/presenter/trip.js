@@ -134,7 +134,6 @@ export default class Trip {
     }
 
     this._renderSort();
-    this._renderCreationPoint();
     this._renderPointList();
   }
 }
