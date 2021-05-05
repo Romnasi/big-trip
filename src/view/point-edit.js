@@ -4,6 +4,9 @@ import {destinations} from './../mock/point-data.js';
 import {formatDate} from './../utils/format-date.js';
 import {getDescByCity} from './../utils/common.js';
 import {getPhotosByCity} from './../utils/common.js';
+import flatpickr from 'flatpickr';
+
+import './../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 
 const getPhotoList = (photos, isPhotos) => {
@@ -163,12 +166,18 @@ export default class PointEdit extends SmartView {
   constructor(point) {
     super();
     this._data = PointEdit.parsePointToData(point);
+    this._datepickerTo = null;
+    this._datepickerFrom = null;
 
+    this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
+    this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._typePointListHandler = this._typePointListHandler.bind(this);
     this._destinationListHandler = this._destinationListHandler.bind(this);
     this._addedOffersChangeHandler = this._addedOffersChangeHandler.bind(this);
+
     this._setInnerHandlers();
+    this._setDatepicker();
   }
 
 
@@ -186,7 +195,42 @@ export default class PointEdit extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+
+  _setDatepicker() {
+    if (this._datepickerTo) {
+      this._datepickerTo.destroy();
+      this._datepickerTo = null;
+    }
+
+    if (this._datepickerFrom) {
+      this._datepickerFrom.destroy();
+      this._datepickerFrom = null;
+    }
+
+    if (this._data.date) {
+      this._datepickerTo = flatpickr(
+        this.getElement().querySelector('#event-start-time-1'),
+        {
+          dateFormat: 'd/m/Y H:i',
+          defaultDate: this._data.date.dateTo,
+          onChange: this._dateToChangeHandler,
+        },
+      );
+
+      this._datepickerFrom = flatpickr(
+        this.getElement().querySelector('#event-end-time-1'),
+        {
+          minDate: this._data.date.dateTo,
+          dateFormat: 'd/m/Y H:i',
+          defaultDate: this._data.date.dateFrom,
+          onChange: this._dateFromChangeHandler,
+        },
+      );
+    }
   }
 
 
@@ -236,6 +280,32 @@ export default class PointEdit extends SmartView {
       photos: getPhotosByCity(city, destinations),
     });
 
+  }
+
+
+  _dateToChangeHandler([userDate]) {
+    this.updateData({
+      date: Object.assign(
+        {},
+        this._data.date,
+        {
+          dateTo: userDate,
+        },
+      ),
+    });
+  }
+
+
+  _dateFromChangeHandler([userDate]) {
+    this.updateData({
+      date: Object.assign(
+        {},
+        this._data.date,
+        {
+          dateFrom: userDate,
+        },
+      ),
+    });
   }
 
 
