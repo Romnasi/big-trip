@@ -1,5 +1,6 @@
 import SmartView from './smart.js';
 import {offers} from './../mock/point-data.js';
+import {cities} from './../mock/point-data.js';
 import {destinations} from './../mock/point-data.js';
 import {formatDate} from './../utils/format-date.js';
 import {getDescByCity} from './../utils/common.js';
@@ -66,7 +67,7 @@ const getOfferList = (type, addedOffers, isOffers, isAddedOffers) => {
 };
 
 
-const getCityList = (cities) => cities.map((city) => `<option value="${city}">`).join('');
+const getCityList = () => cities.map((city) => `<option value="${city}">`).join('');
 
 
 const createControlsPoint = (type) => {
@@ -91,7 +92,6 @@ const createPointEditTemplate = (data) => {
     price,
     photos,
     city,
-    cities,
     description,
     isOffers,
     isAddedOffers,
@@ -128,7 +128,7 @@ const createPointEditTemplate = (data) => {
           <input class="event__input  event__input--destination" id="event-destination-1"
               type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
-            ${getCityList(cities)}
+            ${getCityList()}
           </datalist>
         </div>
 
@@ -284,7 +284,7 @@ export default class PointEdit extends SmartView {
     evt.preventDefault();
     const city = evt.target.value;
 
-    if (!this._data.cities.find((current) => current === city)) {
+    if (!cities.find((current) => current === city)) {
       evt.target.setCustomValidity('Выберите город из предложенного списка');
       return;
     }
