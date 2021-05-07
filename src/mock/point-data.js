@@ -261,6 +261,9 @@ const generateAddedOffer = (type) => {
 };
 
 
+export const cities = Object.values(destinations).map(({name}) => name).slice();
+
+
 export const generatePoint = () => {
   const type = generateType();
   const city = getRandomEl(destinations).name;
