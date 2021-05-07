@@ -11,7 +11,8 @@ import {SortType} from './../const.js';
 
 
 export default class Trip {
-  constructor(tripContainer) {
+  constructor(tripContainer, pointsModel) {
+    this._pointsModel = pointsModel;
     this._tripContainer = tripContainer;
     this._pointPresenter = {};
     this._currentSortType = SortType.DAY;
@@ -36,6 +37,11 @@ export default class Trip {
     render(this._tripComponent, this._pointListComponent, RenderPosition.BEFOREEND);
 
     this._renderTrip();
+  }
+
+
+  _getPoints() {
+    return this._pointsModel.getPoints();
   }
 
 
