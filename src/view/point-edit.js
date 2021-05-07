@@ -1,10 +1,7 @@
 import SmartView from './smart.js';
-import {offers} from './../mock/point-data.js';
-import {cities} from './../mock/point-data.js';
-import {destinations} from './../mock/point-data.js';
+import {offers, cities, destinations} from './../mock/point-data.js';
 import {formatDate} from './../utils/format-date.js';
-import {getDescByCity} from './../utils/common.js';
-import {getPhotosByCity} from './../utils/common.js';
+import {getDescByCity, getPhotosByCity} from './../utils/common.js';
 import flatpickr from 'flatpickr';
 
 import './../../node_modules/flatpickr/dist/flatpickr.min.css';

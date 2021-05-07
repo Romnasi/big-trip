@@ -1,9 +1,6 @@
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
-import {getRandomInteger} from './../utils/common.js';
-import {getRandomEl} from './../utils/common.js';
-import {getDescByCity} from './../utils/common.js';
-import {getPhotosByCity} from './../utils/common.js';
+import {getRandomInteger, getRandomEl, getDescByCity, getPhotosByCity} from './../utils/common.js';
 
 
 const POINT_MIN_PRICE = 20;
