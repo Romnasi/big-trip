@@ -31,4 +31,4 @@ render(tripMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN);
 render(tripInfoComponent, new TripCostView(points), RenderPosition.BEFOREEND);
 
 
-tripPresenter.init(points);
+tripPresenter.init();

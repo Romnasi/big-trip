@@ -4,10 +4,9 @@ import PointListView from './../view/point-list.js';
 import CreationPointView from './../view/creation-point.js';
 import NoPointView from './../view/no-point.js';
 import PointPresenter from './point.js';
-import {updateItem} from './../utils/common.js';
-import {render, RenderPosition} from './../utils/render.js';
+import {render, RenderPosition, remove} from './../utils/render.js';
 import {sortByDateUp, sortByPriceDown, sortByTimeDown} from './../utils/sort.js';
-import {SortType} from './../const.js';
+import {SortType, UpdateType, UserAction} from './../const.js';
 
 
 export default class Trip {
@@ -16,23 +15,23 @@ export default class Trip {
     this._tripContainer = tripContainer;
     this._pointPresenter = {};
     this._currentSortType = SortType.DAY;
+    this._sortComponent = null;
 
     this._tripComponent = new TripView();
-    this._sortComponent = new SortView();
     this._pointListComponent = new PointListView();
     this._noPointComponent = new NoPointView();
     this._creationPointComponent = new CreationPointView();
 
-    this._handlePointChange = this._handlePointChange.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+
+    this._pointsModel.addObserver(this._handleModelEvent);
   }
 
 
-  init(tripPoints) {
-    this._tripPoints = tripPoints.slice();
-    this._sourcedTripPoints = tripPoints.slice();
-
+  init() {
     render(this._tripContainer, this._tripComponent, RenderPosition.BEFOREEND);
     render(this._tripComponent, this._pointListComponent, RenderPosition.BEFOREEND);
 
@@ -41,6 +40,15 @@ export default class Trip {
 
 
   _getPoints() {
+    switch (this._currentSortType) {
+      case SortType.DATE:
+        return this._pointsModel.getPoints().slice().sort(sortByDateUp);
+      case SortType.TIME:
+        return this._pointsModel.getPoints().slice().sort(sortByTimeDown);
+      case SortType.PRICE:
+        return this._pointsModel.getPoints().slice().sort(sortByPriceDown);
+    }
+
     return this._pointsModel.getPoints();
   }
 
@@ -52,29 +60,35 @@ export default class Trip {
   }
 
 
-  _handlePointChange(updatedPoint) {
-    this._tripPoints = updateItem(this._tripPoints, updatedPoint);
-    this._sourcedTripPoints = updateItem(this._sourcedTripPoints, updatedPoint);
-    this._pointPresenter[updatedPoint.id].init(updatedPoint);
+  _handleViewAction(actionType, updateType, update) {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this._pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this._pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this._pointsModel.deletePoint(updateType, update);
+        break;
+    }
   }
 
 
-  _sortPoints(sortType) {
-    switch (sortType) {
-      case SortType.DATE:
-        this._tripPoints.sort(sortByDateUp);
+  _handleModelEvent(updateType, data) {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this._pointPresenter[data.id].init(data);
         break;
-      case SortType.TIME:
-        this._tripPoints.sort(sortByTimeDown);
+      case UpdateType.MINOR:
+        this._clearTrip();
+        this._renderTrip();
         break;
-      case SortType.PRICE:
-        this._tripPoints.sort(sortByPriceDown);
+      case UpdateType.MAJOR:
+        this._clearTrip({resetSortType: true});
+        this._renderTrip();
         break;
-      default:
-        this._tripPoints.sort(sortByDateUp);
     }
-
-    this._currentSortType = sortType;
   }
 
 
@@ -83,16 +97,22 @@ export default class Trip {
       return;
     }
 
-    this._sortPoints(sortType);
+    this._currentSortType = sortType;
 
-    this._clearPointList();
-    this._renderPointList();
+    this._clearTrip();
+    this._renderTrip();
   }
 
 
   _renderSort() {
-    render(this._tripComponent, this._sortComponent, RenderPosition.AFTERBEGIN);
+    if (this._sortComponent !== null) {
+      this._sortComponent == null;
+    }
+
+    this._sortComponent = new SortView(this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+
+    render(this._tripComponent, this._sortComponent, RenderPosition.AFTERBEGIN);
   }
 
 
@@ -102,16 +122,14 @@ export default class Trip {
 
 
   _renderPoint(point) {
-    const pointPresenter = new PointPresenter(this._pointListComponent, this._handlePointChange, this._handleModeChange);
+    const pointPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModeChange);
     pointPresenter.init(point);
     this._pointPresenter[point.id] = pointPresenter;
   }
 
 
-  _renderPoints(from, to) {
-    this._tripPoints
-      .slice(from, to)
-      .forEach((tripPoint) => this._renderPoint(tripPoint));
+  _renderPoints(points) {
+    points.forEach((point) => this._renderPoint(point));
   }
 
 
@@ -129,12 +147,32 @@ export default class Trip {
 
 
   _renderPointList () {
-    this._renderPoints(0, this._tripPoints.length);
+    const points = this._getPoints().slice();
+    this._renderPoints(points);
+  }
+
+
+  _clearTrip({resetSortType = false} = {}) {
+
+    Object
+      .values(this._pointPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._pointPresenter = {};
+
+    remove(this._sortComponent);
+    remove(this._noPointComponent);
+
+    if (resetSortType) {
+      this._currentSortType = SortType.DAY;
+    }
   }
 
 
   _renderTrip() {
-    if (this._tripPoints.length === 0) {
+    const points = this._getPoints();
+    const pointsCount = points.length;
+
+    if (pointsCount === 0) {
       this._renderNoPoints();
       return;
     }
