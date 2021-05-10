@@ -1,4 +1,4 @@
-import {getDiffDate} from './format-date.js';
+import {getDiffDate} from './date.js';
 
 
 // Функция помещает задачи без даты в конце списка,

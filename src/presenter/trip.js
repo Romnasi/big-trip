@@ -138,20 +138,6 @@ export default class Trip {
   }
 
 
-  _clearPointList() {
-    Object
-      .values(this._pointPresenter)
-      .forEach((presenter) => presenter.destroy());
-    this._pointPresenter = {};
-  }
-
-
-  _renderPointList () {
-    const points = this._getPoints().slice();
-    this._renderPoints(points);
-  }
-
-
   _clearTrip({resetSortType = false} = {}) {
 
     Object
@@ -178,6 +164,6 @@ export default class Trip {
     }
 
     this._renderSort();
-    this._renderPointList();
+    this._renderPoints(points.slice());
   }
 }

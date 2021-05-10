@@ -1,6 +1,6 @@
 import SmartView from './smart.js';
 import {offers, cities, destinations} from './../mock/point-data.js';
-import {formatDate} from './../utils/format-date.js';
+import {formatDate} from './../utils/date.js';
 import {getDescByCity, getPhotosByCity} from './../utils/common.js';
 import flatpickr from 'flatpickr';
 
@@ -175,6 +175,7 @@ export default class PointEdit extends SmartView {
     this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
     this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._typePointListHandler = this._typePointListHandler.bind(this);
     this._destinationListHandler = this._destinationListHandler.bind(this);
     this._addedOffersChangeHandler = this._addedOffersChangeHandler.bind(this);
@@ -182,6 +183,21 @@ export default class PointEdit extends SmartView {
     this._setInnerHandlers();
     this._setStartDatepicker();
     this._setEndDatepicker();
+  }
+
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._startDatepicker) {
+      this._startDatepicker.destroy();
+      this._startDatepicker = null;
+    }
+
+    if (this._endDatepicker) {
+      this._endDatepicker.destroy();
+      this._endDatepicker = null;
+    }
   }
 
 
@@ -202,6 +218,7 @@ export default class PointEdit extends SmartView {
     this._setStartDatepicker();
     this._setEndDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
 
@@ -361,6 +378,18 @@ export default class PointEdit extends SmartView {
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
+  }
+
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(PointEdit.parseDataToPoint(this._data));
+  }
+
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
   }
 
 
