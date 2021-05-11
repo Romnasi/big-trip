@@ -6,12 +6,14 @@ import NoPointView from './../view/no-point.js';
 import PointPresenter from './point.js';
 import {render, RenderPosition, remove} from './../utils/render.js';
 import {sortByDateUp, sortByPriceDown, sortByTimeDown} from './../utils/sort.js';
+import {filter} from './../utils/filter.js';
 import {SortType, UpdateType, UserAction} from './../const.js';
 
 
 export default class Trip {
-  constructor(tripContainer, pointsModel) {
+  constructor(tripContainer, pointsModel, filterModel) {
     this._pointsModel = pointsModel;
+    this._filterModel = filterModel;
     this._tripContainer = tripContainer;
     this._pointPresenter = {};
     this._currentSortType = SortType.DAY;
@@ -28,6 +30,7 @@ export default class Trip {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
 
@@ -40,16 +43,20 @@ export default class Trip {
 
 
   _getPoints() {
+    const filterType = this._filterModel.getFilter();
+    const points = this._pointsModel.getPoints();
+    const filtredPoints = filter[filterType](points);
+
     switch (this._currentSortType) {
       case SortType.DATE:
-        return this._pointsModel.getPoints().slice().sort(sortByDateUp);
+        return filtredPoints.sort(sortByDateUp);
       case SortType.TIME:
-        return this._pointsModel.getPoints().slice().sort(sortByTimeDown);
+        return filtredPoints.sort(sortByTimeDown);
       case SortType.PRICE:
-        return this._pointsModel.getPoints().slice().sort(sortByPriceDown);
+        return filtredPoints.sort(sortByPriceDown);
     }
 
-    return this._pointsModel.getPoints();
+    return filtredPoints;
   }
 
 

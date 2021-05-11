@@ -6,7 +6,7 @@ import {getRandomInteger, getRandomEl, getDescByCity, getPhotosByCity} from './.
 const POINT_MIN_PRICE = 20;
 const POINT_MAX_PRICE = 700;
 
-const START_TRIP_MIN_DAY = 7;
+const START_TRIP_MIN_DAY = -7;
 const START_TRIP_MAX_DAY = 9;
 const MIN_TRIP_DURATION = 10;
 const MAX_TRIP_DURATION = 1900;
