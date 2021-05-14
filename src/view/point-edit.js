@@ -142,7 +142,7 @@ const createPointEditTemplate = (data) => {
             ${type}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1"
-              type="text" name="event-destination" value="${city ? city : ''}" list="destination-list-1">
+              type="text" name="event-destination" value="${city ? city : ''}" list="destination-list-1" required>
           <datalist id="destination-list-1">
             ${getCityList()}
           </datalist>
@@ -161,7 +161,8 @@ const createPointEditTemplate = (data) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${isPrice ? price : ''}">
+          <input class="event__input  event__input--price" id="event-price-1"
+            type="number" min="0" name="event-price" value="${isPrice ? price : ''}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -200,6 +201,7 @@ export default class PointEdit extends SmartView {
     this._typePointListHandler = this._typePointListHandler.bind(this);
     this._destinationListHandler = this._destinationListHandler.bind(this);
     this._addedOffersChangeHandler = this._addedOffersChangeHandler.bind(this);
+    this._changePriceHandler = this._changePriceHandler.bind(this);
 
     this._setInnerHandlers();
     this._setStartDatepicker();
@@ -292,6 +294,10 @@ export default class PointEdit extends SmartView {
     this.getElement()
       .querySelector('.event__input--destination')
       .addEventListener('change', this._destinationListHandler);
+
+    this.getElement()
+      .querySelector('.event__input--price')
+      .addEventListener('change', this._changePriceHandler);
 
     if (this._data.isOffers) {
       this.getElement()
@@ -403,6 +409,16 @@ export default class PointEdit extends SmartView {
   }
 
 
+  _changePriceHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      price: evt.target.value,
+    },
+    true,
+    );
+  }
+
+
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
@@ -443,6 +459,8 @@ export default class PointEdit extends SmartView {
     delete data.isOffers;
     delete data.isAddedOffers;
     delete data.isPhotos;
+    delete data.isPrice;
+    delete data.isDestination;
 
     return data;
   }
