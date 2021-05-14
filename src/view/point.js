@@ -1,9 +1,5 @@
 import AbstractView from './abstract.js';
-import {getDuration} from './../utils/format-date.js';
-import {getDayOfMonth} from './../utils/format-date.js';
-import {getDatetime} from './../utils/format-date.js';
-import {getHoursMinutes} from './../utils/format-date.js';
-import {getDatetimeWithHM} from './../utils/format-date.js';
+import {getDuration, getDayOfMonth, getDatetime, getHoursMinutes, getDatetimeWithHM} from './../utils/date.js';
 
 
 const createOffers = (addedOffers) => {
@@ -57,7 +53,7 @@ const createPointTemplate = (point) => {
         <p class="event__duration">${getDuration(dateTo, dateFrom)}</p>
       </div>
       <p class="event__price">
-        &euro;&nbsp;<span class="event__price-value">${price}</span>
+        &euro;&nbsp;<span class="event__price-value">${price ? price : ''}</span>
       </p>
       ${getOfferList(addedOffers)}
       <button class="event__favorite-btn  ${checkFavorite(isFavorite)}" type="button">

@@ -1,11 +1,14 @@
 import PointView from './../view/point.js';
 import PointEditView from './../view/point-edit.js';
 import {render, RenderPosition, replace, remove} from './../utils/render.js';
+import {UserAction, UpdateType} from './../const.js';
+import {isDateEqual} from './../utils/date.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
 };
+
 
 export default class Point {
   constructor(pointListComponent, changeData, changeMode) {
@@ -20,6 +23,7 @@ export default class Point {
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
@@ -36,6 +40,7 @@ export default class Point {
     this._pointComponent.setEditClickHandler(this._handleEditClick);
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this._pointListComponent, this._pointComponent, RenderPosition.BEFOREEND);
@@ -99,6 +104,8 @@ export default class Point {
 
   _handleFavoriteClick() {
     this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
       Object.assign(
         {},
         this._point,
@@ -110,8 +117,26 @@ export default class Point {
   }
 
 
-  _handleFormSubmit(point) {
-    this._changeData(point);
+  _handleFormSubmit(update) {
+
+    const isMinorUpdate =
+      !isDateEqual(this._point.date.dateTo, update.date.dateTo) ||
+      !isDateEqual(this._point.date.dateFrom, update.date.dateFrom);
+
+    this._changeData(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
     this._replaceFormToPoint();
+  }
+
+
+  _handleDeleteClick(point) {
+    this._changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   }
 }

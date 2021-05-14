@@ -1,15 +1,12 @@
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
-import {getRandomInteger} from './../utils/common.js';
-import {getRandomEl} from './../utils/common.js';
-import {getDescByCity} from './../utils/common.js';
-import {getPhotosByCity} from './../utils/common.js';
+import {getRandomInteger, getRandomEl, getDescByCity, getPhotosByCity} from './../utils/common.js';
 
 
 const POINT_MIN_PRICE = 20;
 const POINT_MAX_PRICE = 700;
 
-const START_TRIP_MIN_DAY = 7;
+const START_TRIP_MIN_DAY = -7;
 const START_TRIP_MAX_DAY = 9;
 const MIN_TRIP_DURATION = 10;
 const MAX_TRIP_DURATION = 1900;
@@ -273,7 +270,7 @@ export const generatePoint = () => {
     type,
     city,
     description: getDescByCity(city, destinations),
-    destination: getRandomEl(destinations, destinations),
+    destination: getRandomEl(destinations),
     addedOffers: generateAddedOffer(type),
     photos: getPhotosByCity(city, destinations),
     date: generateDate(),

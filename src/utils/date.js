@@ -6,19 +6,16 @@ const HOUR_IN_MINUTES = 60;
 const DAY_IN_MINUTES = 1440;
 
 
-// trip-info.js
 export const formatDate = (date) => {
   return dayjs(date).format('DD/MM/YY HH:mm');
 };
 
 
-// utils/sort.js
 export const getDiffDate = (timeA, timeB, format = 'minute') => {
   return dayjs(timeA).diff(dayjs(timeB), format);
 };
 
 
-// trip-point.js
 export const getTripDuration = (points) => {
   const dateToList = points.map((point) => point.date.dateTo);
   const dateFromList = points.map((point) => point.date.dateTo);
@@ -29,19 +26,15 @@ export const getTripDuration = (points) => {
 };
 
 
-// Форматирование дат
 export const getDayOfMonth = (dateTo) => dayjs(dateTo).format('MMM D');
 export const getDatetime = (dateTo) => dayjs(dateTo).format('YYYY-MM-DD');
 export const getHoursMinutes = (date) => dayjs(date).format('HH:mm');
 export const getDatetimeWithHM = (date) => dayjs(date).format('YYYY-MM-DDTHH:mm');
 
 
-const getTwoDigitFormat = (digit) => {
-  return digit > 9 ? digit : '0' + digit;
-};
+const getTwoDigitFormat = (digit) => digit > 9 ? digit : '0' + digit;
 
 
-// Возвращает минуты в формате вида '02H 44M' или '12H 00M'
 const getFormatWithHours = (min) => {
   const hours = getQuotientWithoutRemainder(min, HOUR_IN_MINUTES);
   const minutes = min - hours * HOUR_IN_MINUTES;
@@ -81,4 +74,9 @@ export const getDuration = (dateTo, dateFrom) => {
   const durationInMin = getDiffDate(dateFrom, dateTo);
 
   return getDurationFormat(durationInMin);
+};
+
+
+export const isDateEqual = (dateA, dateB) => {
+  return (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB);
 };

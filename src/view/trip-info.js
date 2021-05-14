@@ -1,5 +1,5 @@
 import AbstractView from './abstract.js';
-import {getTripDuration} from './../utils/format-date.js';
+import {getTripDuration} from './../utils/date.js';
 
 
 const MAX_COUNT_CITY = 3;
