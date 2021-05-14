@@ -270,7 +270,7 @@ export const generatePoint = () => {
     type,
     city,
     description: getDescByCity(city, destinations),
-    destination: getRandomEl(destinations, destinations),
+    destination: getRandomEl(destinations),
     addedOffers: generateAddedOffer(type),
     photos: getPhotosByCity(city, destinations),
     date: generateDate(),

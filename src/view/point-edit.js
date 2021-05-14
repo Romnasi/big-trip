@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import SmartView from './smart.js';
 import {offers, cities, destinations} from './../mock/point-data.js';
 import {formatDate} from './../utils/date.js';
@@ -6,6 +7,22 @@ import flatpickr from 'flatpickr';
 
 import './../../node_modules/flatpickr/dist/flatpickr.min.css';
 
+const defaultType = 'Flight';
+
+const BLANK_POINT = {
+  type: defaultType,
+  city: null,
+  description: null,
+  destination: null,
+  addedOffers: null,
+  photos: null,
+  date: {
+    dateTo: dayjs().toDate(),
+    dateFrom: dayjs().toDate(),
+  },
+  isFavorite: false,
+  price: null,
+};
 
 const DATEPICKER_SETTINGS = {
   dateFormat: 'd/m/Y H:i',
@@ -93,6 +110,8 @@ const createPointEditTemplate = (data) => {
     isOffers,
     isAddedOffers,
     isPhotos,
+    isDestination,
+    isPrice,
     date: {
       dateTo,
       dateFrom,
@@ -123,7 +142,7 @@ const createPointEditTemplate = (data) => {
             ${type}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1"
-              type="text" name="event-destination" value="${city}" list="destination-list-1">
+              type="text" name="event-destination" value="${city ? city : ''}" list="destination-list-1">
           <datalist id="destination-list-1">
             ${getCityList()}
           </datalist>
@@ -142,7 +161,7 @@ const createPointEditTemplate = (data) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${isPrice ? price : ''}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -153,11 +172,13 @@ const createPointEditTemplate = (data) => {
       </header>
       <section class="event__details">
         ${getOfferList(type, addedOffers, isOffers, isAddedOffers, isOffers)}
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${description}</p>
-          ${getPhotoList(photos, isPhotos)}
-        </section>
+        ${isDestination
+    ? `<section class="event__section  event__section--destination">
+            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+            <p class="event__destination-description">${description}</p>
+            ${getPhotoList(photos, isPhotos)}
+          </section>`
+    : ''}
       </section>
     </form>
   </li>`;
@@ -165,7 +186,7 @@ const createPointEditTemplate = (data) => {
 
 
 export default class PointEdit extends SmartView {
-  constructor(point) {
+  constructor(point = BLANK_POINT) {
     super();
     this._data = PointEdit.parsePointToData(point);
 
@@ -267,6 +288,7 @@ export default class PointEdit extends SmartView {
     this.getElement()
       .querySelector('.event__type-group')
       .addEventListener('click', this._typePointListHandler);
+
     this.getElement()
       .querySelector('.event__input--destination')
       .addEventListener('change', this._destinationListHandler);
@@ -294,6 +316,7 @@ export default class PointEdit extends SmartView {
     });
   }
 
+
   _destinationListHandler(evt) {
     evt.preventDefault();
     const city = evt.target.value;
@@ -303,10 +326,15 @@ export default class PointEdit extends SmartView {
       return;
     }
 
+    const description = getDescByCity(city, destinations);
+    const photos = getPhotosByCity(city, destinations);
+
     this.updateData({
       city,
-      description: getDescByCity(city, destinations),
-      photos: getPhotosByCity(city, destinations),
+      description,
+      photos,
+      isDestination: description !== null && photos !== null,
+      isPhotos: photos !== null,
     });
   }
 
@@ -394,8 +422,7 @@ export default class PointEdit extends SmartView {
 
 
   static parsePointToData(point) {
-    const {type, addedOffers, photos} = point;
-
+    const {type, addedOffers, photos, description, price} = point;
     return Object.assign(
       {},
       point,
@@ -403,6 +430,8 @@ export default class PointEdit extends SmartView {
         isOffers: offers[type] !== null,
         isAddedOffers: addedOffers !== null,
         isPhotos: photos !== null,
+        isDestination: description !== null && photos !== null,
+        isPrice: price !== null,
       },
     );
   }

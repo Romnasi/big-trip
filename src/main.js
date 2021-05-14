@@ -1,5 +1,4 @@
 import SiteMenuView from './view/site-menu.js';
-// import FilterView from './view/filter.js';
 import TripInfoView from './view/trip-info.js';
 import TripCostView from './view/trip-cost.js';
 
@@ -31,10 +30,8 @@ const tripContainerElement = pageMainElement.querySelector('.page-body__containe
 
 
 render(navigationElement, new SiteMenuView(), RenderPosition.BEFOREEND);
-// render(filtersElement, new FilterView(filters, 'everything'), RenderPosition.BEFOREEND);
 
 const tripInfoComponent = new TripInfoView(points);
-// const tripPresenter = new TripPresenter(tripContainerElement, pointsModel);
 render(tripMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN);
 render(tripInfoComponent, new TripCostView(points), RenderPosition.BEFOREEND);
 
@@ -43,3 +40,8 @@ const filterPresenter = new FilterPresenter(filtersElement, filterModel, pointsM
 
 filterPresenter.init();
 tripPresenter.init();
+
+document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  tripPresenter.createPoint();
+});

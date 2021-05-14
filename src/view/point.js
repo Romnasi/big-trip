@@ -53,7 +53,7 @@ const createPointTemplate = (point) => {
         <p class="event__duration">${getDuration(dateTo, dateFrom)}</p>
       </div>
       <p class="event__price">
-        &euro;&nbsp;<span class="event__price-value">${price}</span>
+        &euro;&nbsp;<span class="event__price-value">${price ? price : ''}</span>
       </p>
       ${getOfferList(addedOffers)}
       <button class="event__favorite-btn  ${checkFavorite(isFavorite)}" type="button">

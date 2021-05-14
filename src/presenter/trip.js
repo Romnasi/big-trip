@@ -1,13 +1,13 @@
 import TripView from './../view/trip.js';
 import SortView from './../view/sort.js';
 import PointListView from './../view/point-list.js';
-import CreationPointView from './../view/creation-point.js';
 import NoPointView from './../view/no-point.js';
 import PointPresenter from './point.js';
+import PointNewPresenter from './point-new.js';
 import {render, RenderPosition, remove} from './../utils/render.js';
 import {sortByDateUp, sortByPriceDown, sortByTimeDown} from './../utils/sort.js';
 import {filter} from './../utils/filter.js';
-import {SortType, UpdateType, UserAction} from './../const.js';
+import {SortType, UpdateType, UserAction, FilterType} from './../const.js';
 
 
 export default class Trip {
@@ -22,7 +22,6 @@ export default class Trip {
     this._tripComponent = new TripView();
     this._pointListComponent = new PointListView();
     this._noPointComponent = new NoPointView();
-    this._creationPointComponent = new CreationPointView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -31,6 +30,8 @@ export default class Trip {
 
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
+
+    this._pointNewPresenter = new PointNewPresenter(this._pointListComponent, this._handleViewAction);
   }
 
 
@@ -41,6 +42,12 @@ export default class Trip {
     this._renderTrip();
   }
 
+
+  createPoint() {
+    this._currentSortType = SortType.DAY;
+    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._pointNewPresenter.init();
+  }
 
   _getPoints() {
     const filterType = this._filterModel.getFilter();
@@ -61,6 +68,7 @@ export default class Trip {
 
 
   _handleModeChange() {
+    this._pointNewPresenter.destroy();
     Object
       .values(this._pointPresenter)
       .forEach((presenter) => presenter.resetView());
@@ -120,11 +128,6 @@ export default class Trip {
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
 
     render(this._tripComponent, this._sortComponent, RenderPosition.AFTERBEGIN);
-  }
-
-
-  _renderCreationPoint() {
-    render(this._pointListComponent, this._creationPointComponent, RenderPosition.BEFOREEND);
   }
 
 
