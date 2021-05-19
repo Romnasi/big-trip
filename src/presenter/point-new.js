@@ -10,6 +10,7 @@ export default class PoitNew {
     this._changeData = changeData;
 
     this._pointEditComponent = null;
+    this._destroyCallback = null;
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
@@ -17,7 +18,9 @@ export default class PoitNew {
   }
 
 
-  init() {
+  init(callback) {
+    this._destroyCallback = callback;
+
     if (this._pointEditComponent !== null) {
       return;
     }
@@ -35,6 +38,10 @@ export default class PoitNew {
   destroy() {
     if (this._pointEditComponent === null) {
       return;
+    }
+
+    if (this._destroyCallback !== null) {
+      this._destroyCallback();
     }
 
     remove(this._pointEditComponent);

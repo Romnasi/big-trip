@@ -52,7 +52,7 @@ const getFormatWithDays = (min) => {
 };
 
 
-const getDurationFormat = (min) => {
+export const getDurationFormat = (min) => {
   let duration = '';
 
   // Более суток: дни часы минуты (например, 01D 02H 30M или 07D 00H 00M, если часы и/или минуты равны нулю).
