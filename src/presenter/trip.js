@@ -7,7 +7,8 @@ import PointNewPresenter from './point-new.js';
 import {render, RenderPosition, remove} from './../utils/render.js';
 import {sortByDateUp, sortByPriceDown, sortByTimeDown} from './../utils/sort.js';
 import {filter} from './../utils/filter.js';
-import {SortType, UpdateType, UserAction, FilterType} from './../const.js';
+import {SortType, UpdateType, UserAction} from './../const.js';
+// import {SortType, UpdateType, UserAction, FilterType} from './../const.js';
 
 
 export default class Trip {
@@ -28,8 +29,8 @@ export default class Trip {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
+    // this._pointsModel.addObserver(this._handleModelEvent);
+    // this._filterModel.addObserver(this._handleModelEvent);
 
     this._pointNewPresenter = new PointNewPresenter(this._pointListComponent, this._handleViewAction);
   }
@@ -39,14 +40,28 @@ export default class Trip {
     render(this._tripContainer, this._tripComponent, RenderPosition.BEFOREEND);
     render(this._tripComponent, this._pointListComponent, RenderPosition.BEFOREEND);
 
+    this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._renderTrip();
   }
 
 
-  createPoint() {
-    this._currentSortType = SortType.DAY;
-    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._pointNewPresenter.init();
+  destroy() {
+    this._clearTrip({resetSortType: true});
+
+    remove(this._pointListComponent);
+    remove(this._tripComponent);
+
+    this._pointsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
+
+  createPoint(callback) {
+    // this._currentSortType = SortType.DAY;
+    // this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._pointNewPresenter.init(callback);
   }
 
   _getPoints() {
@@ -150,6 +165,7 @@ export default class Trip {
 
   _clearTrip({resetSortType = false} = {}) {
 
+    this._pointNewPresenter.destroy();
     Object
       .values(this._pointPresenter)
       .forEach((presenter) => presenter.destroy());

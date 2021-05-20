@@ -412,7 +412,7 @@ export default class PointEdit extends SmartView {
   _changePriceHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      price: evt.target.value,
+      price: parseInt(evt.target.value, 10),
     },
     true,
     );
