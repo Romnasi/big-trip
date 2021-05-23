@@ -30,6 +30,8 @@ export const MenuItem = {
 };
 
 export const Bar = {
+  HEIGHT: 55,
+
   TYPE: 'horizontalBar',
   BACKGROUND_COLOR: '#ffffff',
   HOVER_BACKGROUND_COLOR: '#ffffff',

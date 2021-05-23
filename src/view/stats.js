@@ -6,8 +6,6 @@ import {getDurationFormat, getDiffDate} from './../utils/date.js';
 import {Bar} from './../const.js';
 
 
-const BAR_HEIGHT = 55;
-
 const renderMoneyChart = (moneyCtx, money, types) => {
   return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
@@ -347,7 +345,7 @@ export default class Stats extends SmartView {
     const timeCtx = this.getElement().querySelector('.statistics__chart--time');
 
     const barNumber = this._types.length;
-    const ctxHeight = BAR_HEIGHT * barNumber;
+    const ctxHeight = Bar.HEIGHT * barNumber;
     moneyCtx.height = ctxHeight;
     typeCtx.height = ctxHeight;
     timeCtx.height = ctxHeight;
