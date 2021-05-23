@@ -22,6 +22,7 @@ const BLANK_POINT = {
   },
   isFavorite: false,
   price: null,
+  isNew: true,
 };
 
 const DATEPICKER_SETTINGS = {
@@ -112,6 +113,7 @@ const createPointEditTemplate = (data) => {
     isPhotos,
     isDestination,
     isPrice,
+    isNew,
     date: {
       dateTo,
       dateFrom,
@@ -166,8 +168,8 @@ const createPointEditTemplate = (data) => {
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
-        <button class="event__rollup-btn" type="button">
+        <button class="event__reset-btn" type="reset">${isNew ? 'Cancel' : 'Delete'}</button>
+        ${isNew ? '' : '<button class="event__rollup-btn" type="button">'}
           <span class="visually-hidden">Open event</span>
         </button>
       </header>
@@ -373,6 +375,10 @@ export default class PointEdit extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
+    if (this._data.isNew) {
+      this._data.isNew = false;
+    }
+
     this._callback.formSubmit(PointEdit.parsePointToData(this._data));
   }
 
@@ -438,7 +444,7 @@ export default class PointEdit extends SmartView {
 
 
   static parsePointToData(point) {
-    const {type, addedOffers, photos, description, price} = point;
+    const {type, addedOffers, photos, description, price, isNew} = point;
     return Object.assign(
       {},
       point,
@@ -448,6 +454,7 @@ export default class PointEdit extends SmartView {
         isPhotos: photos !== null,
         isDestination: description !== null && photos !== null,
         isPrice: price !== null,
+        isNew: isNew ? isNew : false,
       },
     );
   }
@@ -461,6 +468,7 @@ export default class PointEdit extends SmartView {
     delete data.isPhotos;
     delete data.isPrice;
     delete data.isDestination;
+    delete data.isNew;
 
     return data;
   }
