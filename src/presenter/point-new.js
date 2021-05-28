@@ -53,13 +53,21 @@ export default class PoitNew {
   }
 
 
+  setSaving() {
+    this._PointEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+
   _handleFormSubmit(point) {
     this._changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
       point,
     );
-    this.destroy();
+    // this.destroy();
   }
 
 
