@@ -137,8 +137,6 @@ export default class Points extends Observer {
     delete adaptedPoint.isFavorite;
     delete adaptedPoint.addedOffers;
 
-    console.log('адаптированное', adaptedPoint);
-
     return adaptedPoint;
   }
 }
