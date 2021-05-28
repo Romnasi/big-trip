@@ -1,5 +1,4 @@
 import PointEditView from './../view/point-edit.js';
-import {nanoid} from 'nanoid';
 import {remove, render, RenderPosition} from './../utils/render.js';
 import {UserAction, UpdateType} from './../const.js';
 
@@ -18,14 +17,17 @@ export default class PoitNew {
   }
 
 
-  init(callback) {
+  init(callback, store) {
     this._destroyCallback = callback;
 
     if (this._pointEditComponent !== null) {
       return;
     }
 
-    this._pointEditComponent = new PointEditView();
+    const offers = store.getOffers();
+    const destinations = store.getDestinations();
+
+    this._pointEditComponent = new PointEditView(offers, destinations);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
@@ -55,7 +57,7 @@ export default class PoitNew {
     this._changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      Object.assign({id: nanoid()}, point),
+      point,
     );
     this.destroy();
   }

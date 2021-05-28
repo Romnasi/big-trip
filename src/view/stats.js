@@ -3,72 +3,71 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import SmartView from './smart.js';
 
 import {getDurationFormat, getDiffDate} from './../utils/date.js';
+import {Bar} from './../const.js';
 
-
-const BAR_HEIGHT = 55;
 
 const renderMoneyChart = (moneyCtx, money, types) => {
   return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
-    type: 'horizontalBar',
+    type: Bar.TYPE,
     data: {
       labels: types,
       datasets: [{
         data: money,
-        backgroundColor: '#ffffff',
-        hoverBackgroundColor: '#ffffff',
-        anchor: 'start',
+        backgroundColor: Bar.BACKGROUND_COLOR,
+        hoverBackgroundColor: Bar.HOVER_BACKGROUND_COLOR,
+        anchor: Bar.DATA_ANCHOR,
       }],
     },
     options: {
       plugins: {
         datalabels: {
           font: {
-            size: 13,
+            size: Bar.DATA_LABELS_FONTSIZE,
           },
-          color: '#000000',
-          anchor: 'end',
-          align: 'start',
+          color: Bar.DATA_LABELS_COLOR,
+          anchor: Bar.DATA_LABELS_ANCHOR,
+          align: Bar.DATA_LABELS_ALIGN,
           formatter: (val) => `€ ${val}`,
         },
       },
       title: {
-        display: true,
-        text: 'MONEY',
-        fontColor: '#000000',
-        fontSize: 23,
-        position: 'left',
+        display: Bar.TITLE_DISPLAY,
+        text: Bar.MONEY_CHART_TITLE,
+        fontColor: Bar.TITLE_FONT_COLOR,
+        fontSize: Bar.TITLE_FONTSIZE,
+        position: Bar.TITLE_POSITION,
       },
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: '#000000',
-            padding: 5,
-            fontSize: 13,
+            fontColor: Bar.Y_TICKS_FONT_COLOR,
+            padding: Bar.Y_TICKS_PADDING,
+            fontSize: Bar.Y_TICKS_FONTSIZE,
           },
           gridLines: {
-            display: false,
-            drawBorder: false,
+            display: Bar.Y_GRID_LINES_DISPLAY,
+            drawBorder: Bar.Y_GRID_LINES_DRAW_BORDER,
           },
-          barThickness: 44,
+          barThickness: Bar.Y_BAR_THICKNESS,
         }],
         xAxes: [{
           ticks: {
-            display: false,
-            beginAtZero: true,
+            display: Bar.X_TICKS_DISPLAY,
+            beginAtZero: Bar.X_TICKS_BEGIN_AT_ZERO,
           },
           gridLines: {
-            display: false,
-            drawBorder: false,
+            display: Bar.X_GRID_LINES_DISPLAY,
+            drawBorder: Bar.X_GRID_LINES_DRAW_BORDER,
           },
-          minBarLength: 50,
+          minBarLength: Bar.X_MIN_BAR_LENGTH,
         }],
       },
       legend: {
-        display: false,
+        display: Bar.LEGEND_DISPLAY,
       },
       tooltips: {
-        enabled: false,
+        enabled: Bar.TOOLTIPS_ENABLED,
       },
     },
   });
@@ -78,65 +77,65 @@ const renderMoneyChart = (moneyCtx, money, types) => {
 const renderTypeChart = (typeCtx, numbers, types) => {
   return new Chart(typeCtx, {
     plugins: [ChartDataLabels],
-    type: 'horizontalBar',
+    type: Bar.TYPE,
     data: {
       labels: types,
       datasets: [{
         data: numbers,
-        backgroundColor: '#ffffff',
-        hoverBackgroundColor: '#ffffff',
-        anchor: 'start',
+        backgroundColor: Bar.BACKGROUND_COLOR,
+        hoverBackgroundColor: Bar.HOVER_BACKGROUND_COLOR,
+        anchor: Bar.DATA_ANCHOR,
       }],
     },
     options: {
       plugins: {
         datalabels: {
           font: {
-            size: 13,
+            size: Bar.DATA_LABELS_FONTSIZE,
           },
-          color: '#000000',
-          anchor: 'end',
-          align: 'start',
+          color: Bar.DATA_LABELS_COLOR,
+          anchor: Bar.DATA_LABELS_ANCHOR,
+          align: Bar.DATA_LABELS_ALIGN,
           formatter: (val) => `${val}x`,
         },
       },
       title: {
-        display: true,
-        text: 'TYPE',
-        fontColor: '#000000',
-        fontSize: 23,
-        position: 'left',
+        display: Bar.true,
+        text: Bar.TYPE_CHART_TITLE,
+        fontColor: Bar.TITLE_FONT_COLOR,
+        fontSize: Bar.TITLE_FONTSIZE,
+        position: Bar.TITLE_POSITION,
       },
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: '#000000',
-            padding: 5,
-            fontSize: 13,
+            fontColor: Bar.Y_TICKS_FONT_COLOR,
+            padding: Bar.Y_TICKS_PADDING,
+            fontSize: Bar.Y_TICKS_FONTSIZE,
           },
           gridLines: {
-            display: false,
-            drawBorder: false,
+            display: Bar.Y_GRID_LINES_DISPLAY,
+            drawBorder: Bar.Y_GRID_LINES_DRAW_BORDER,
           },
-          barThickness: 44,
+          barThickness: Bar.Y_BAR_THICKNESS,
         }],
         xAxes: [{
           ticks: {
-            display: false,
-            beginAtZero: true,
+            display: Bar.X_TICKS_DISPLAY,
+            beginAtZero: Bar.X_TICKS_BEGIN_AT_ZERO,
           },
           gridLines: {
-            display: false,
-            drawBorder: false,
+            display: Bar.X_GRID_LINES_DISPLAY,
+            drawBorder: Bar.X_GRID_LINES_DRAW_BORDER,
           },
-          minBarLength: 50,
+          minBarLength: Bar.X_MIN_BAR_LENGTH,
         }],
       },
       legend: {
-        display: false,
+        display: Bar.LEGEND_DISPLAY,
       },
       tooltips: {
-        enabled: false,
+        enabled: Bar.TOOLTIPS_ENABLED,
       },
     },
   });
@@ -145,65 +144,65 @@ const renderTypeChart = (typeCtx, numbers, types) => {
 const renderTimeSpendChart = (timeCtx, time, types) => {
   return new Chart(timeCtx, {
     plugins: [ChartDataLabels],
-    type: 'horizontalBar',
+    type: Bar.TYPE,
     data: {
       labels: types,
       datasets: [{
         data: time,
-        backgroundColor: '#ffffff',
-        hoverBackgroundColor: '#ffffff',
-        anchor: 'start',
+        backgroundColor: Bar.BACKGROUND_COLOR,
+        hoverBackgroundColor: Bar.HOVER_BACKGROUND_COLOR,
+        anchor: Bar.DATA_ANCHOR,
       }],
     },
     options: {
       plugins: {
         datalabels: {
           font: {
-            size: 13,
+            size: Bar.DATA_LABELS_FONTSIZE,
           },
-          color: '#000000',
-          anchor: 'end',
-          align: 'start',
+          color: Bar.DATA_LABELS_COLOR,
+          anchor: Bar.DATA_LABELS_ANCHOR,
+          align: Bar.DATA_LABELS_ALIGN,
           formatter: (val) => `${getDurationFormat(val)}`,
         },
       },
       title: {
-        display: true,
-        text: 'TIME-SPEND',
-        fontColor: '#000000',
-        fontSize: 23,
-        position: 'left',
+        display: Bar.TITLE_DISPLAY,
+        text: Bar.TIME_CHART_TITLE,
+        fontColor: Bar.TITLE_FONT_COLOR,
+        fontSize: Bar.TITLE_FONTSIZE,
+        position: Bar.TITLE_POSITION,
       },
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: '#000000',
-            padding: 5,
-            fontSize: 13,
+            fontColor: Bar.Y_TICKS_FONT_COLOR,
+            padding: Bar.Y_TICKS_PADDING,
+            fontSize: Bar.Y_TICKS_FONTSIZE,
           },
           gridLines: {
-            display: false,
-            drawBorder: false,
+            display: Bar.Y_GRID_LINES_DISPLAY,
+            drawBorder: Bar.Y_GRID_LINES_DRAW_BORDER,
           },
-          barThickness: 44,
+          barThickness: Bar.Y_BAR_THICKNESS,
         }],
         xAxes: [{
           ticks: {
-            display: false,
-            beginAtZero: true,
+            display: Bar.X_TICKS_DISPLAY,
+            beginAtZero: Bar.X_TICKS_BEGIN_AT_ZERO,
           },
           gridLines: {
-            display: false,
-            drawBorder: false,
+            display: Bar.X_GRID_LINES_DISPLAY,
+            drawBorder: Bar.X_GRID_LINES_DRAW_BORDER,
           },
-          minBarLength: 70,
+          minBarLength: Bar.X_MIN_BAR_LENGTH,
         }],
       },
       legend: {
-        display: false,
+        display: Bar.LEGEND_DISPLAY,
       },
       tooltips: {
-        enabled: false,
+        enabled: Bar.TOOLTIPS_ENABLED,
       },
     },
   });
@@ -346,7 +345,7 @@ export default class Stats extends SmartView {
     const timeCtx = this.getElement().querySelector('.statistics__chart--time');
 
     const barNumber = this._types.length;
-    const ctxHeight = BAR_HEIGHT * barNumber;
+    const ctxHeight = Bar.HEIGHT * barNumber;
     moneyCtx.height = ctxHeight;
     typeCtx.height = ctxHeight;
     timeCtx.height = ctxHeight;

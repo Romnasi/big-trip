@@ -10,13 +10,18 @@ import FilterPresenter from './presenter/filter.js';
 import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
 
-import {generatePoint} from './mock/point-data.js';
 import {render, RenderPosition, remove} from './utils/render.js';
 import {MenuItem, UpdateType, FilterType} from './const.js';
+import Api from './api.js';
+import Store from './store.js';
 
-const POINT_COUNT = 22;
-const points = new Array(POINT_COUNT).fill().map(() => generatePoint());
 
+const AUTHORIZATION = 'Basic eo0w590ik29889s';
+const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
+
+export const store = new Store();
+
+const api = new Api(END_POINT, AUTHORIZATION, store);
 
 const tripMainElement = document.querySelector('.trip-main');
 const navigationElement = tripMainElement.querySelector('.trip-controls__navigation');
@@ -24,22 +29,15 @@ const filtersElement = tripMainElement.querySelector('.trip-controls__filters');
 const btnNewEventElement = tripMainElement.querySelector('.trip-main__event-add-btn');
 
 const pointsModel = new PointsModel();
-pointsModel.setPoints(points);
-
 const filterModel = new FilterModel();
 
 const pageMainElement = document.querySelector('.page-main');
 const tripContainerElement = pageMainElement.querySelector('.page-body__container');
 
 const siteMenuComponent = new SiteMenuView();
-render(navigationElement, siteMenuComponent, RenderPosition.BEFOREEND);
-
-const tripInfoComponent = new TripInfoView(points);
-render(tripMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN);
-render(tripInfoComponent, new TripCostView(points), RenderPosition.BEFOREEND);
 
 
-const tripPresenter = new TripPresenter(tripContainerElement, pointsModel, filterModel);
+const tripPresenter = new TripPresenter(tripContainerElement, pointsModel, filterModel, store, api);
 const filterPresenter = new FilterPresenter(filtersElement, filterModel, pointsModel);
 
 
@@ -56,7 +54,6 @@ let statsComponent = null;
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.NEW_EVENT:
-      // Скрыть статистику
       remove(statsComponent);
       tripPresenter.destroy();
       filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
@@ -67,15 +64,12 @@ const handleSiteMenuClick = (menuItem) => {
       siteMenuComponent.setMenuItem(MenuItem.TABLE);
       break;
     case MenuItem.TABLE:
-      // tripPresenter.destroy();
       tripPresenter.init();
-      // Скрыть статистику
       remove(statsComponent);
       siteMenuComponent.setMenuItem(MenuItem.TABLE);
       break;
     case MenuItem.STATS:
       tripPresenter.destroy();
-      // Показать статистику
       statsComponent = new StatsView(pointsModel.getPoints());
       render(tripContainerElement, statsComponent, RenderPosition.BEFOREEND);
       siteMenuComponent.setMenuItem(MenuItem.STATS);
@@ -83,8 +77,30 @@ const handleSiteMenuClick = (menuItem) => {
   }
 };
 
-siteMenuComponent.setMenuClickHandler(handleSiteMenuClick, btnNewEventElement);
+
+api
+  .getAllData()
+  .then((points) => {
+    pointsModel.setPoints(UpdateType.INIT, points);
+
+    const tripInfoComponent = new TripInfoView(points);
+    render(tripMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN);
+    render(tripInfoComponent, new TripCostView(points), RenderPosition.BEFOREEND);
+
+    render(navigationElement, siteMenuComponent, RenderPosition.BEFOREEND);
+    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick, btnNewEventElement);
+  })
+  .catch(() => {
+    pointsModel.setPoints(UpdateType.INIT, []);
+
+    const tripInfoComponent = new TripInfoView([]);
+    render(tripMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN);
+    render(tripInfoComponent, new TripCostView([]), RenderPosition.BEFOREEND);
+
+    render(navigationElement, siteMenuComponent, RenderPosition.BEFOREEND);
+    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick, btnNewEventElement);
+  });
+
 
 filterPresenter.init();
 tripPresenter.init();
-// render(tripContainerElement, new StatsView(pointsModel.getPoints()), RenderPosition.BEFOREEND);
