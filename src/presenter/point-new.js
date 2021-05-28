@@ -54,10 +54,23 @@ export default class PoitNew {
 
 
   setSaving() {
-    this._PointEditComponent.updateData({
+    this._pointEditComponent.updateData({
       isDisabled: true,
       isSaving: true,
     });
+  }
+
+
+  setAborting() {
+    const resetFormState = () => {
+      this._pointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isReseting: false,
+      });
+    };
+
+    this._pointEditComponent.shake(resetFormState);
   }
 
 
@@ -67,7 +80,6 @@ export default class PoitNew {
       UpdateType.MINOR,
       point,
     );
-    // this.destroy();
   }
 
 
