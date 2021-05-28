@@ -386,7 +386,7 @@ export default class PointEdit extends SmartView {
       this._data.isNew = false;
     }
 
-    this._callback.formSubmit(PointEdit.parsePointToData(this._data, this._offers));
+    this._callback.formSubmit(PointEdit.parseDataToPoint(this._data, this._offers));
   }
 
 

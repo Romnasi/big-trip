@@ -121,7 +121,7 @@ export default class Points extends Observer {
       point,
       {
         'type': point.type.toLowerCase(),
-        'base_price': point.price,
+        'base_price': point.price !== null ? point.price : 0,
         'date_to': point.date.dateFrom !== null ? point.date.dateFrom.toISOString() : null,
         'date_from': point.date.dateTo !== null ? point.date.dateTo.toISOString() : null,
         'is_favorite': point.isFavorite,
@@ -136,6 +136,8 @@ export default class Points extends Observer {
     delete adaptedPoint.date;
     delete adaptedPoint.isFavorite;
     delete adaptedPoint.addedOffers;
+
+    console.log('адаптированное', adaptedPoint);
 
     return adaptedPoint;
   }
