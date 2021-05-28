@@ -18,14 +18,17 @@ export default class PoitNew {
   }
 
 
-  init(callback) {
+  init(callback, store) {
     this._destroyCallback = callback;
 
     if (this._pointEditComponent !== null) {
       return;
     }
 
-    this._pointEditComponent = new PointEditView();
+    const offers = store.getOffers();
+    const destinations = store.getDestinations();
+
+    this._pointEditComponent = new PointEditView(offers, destinations);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
