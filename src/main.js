@@ -92,3 +92,8 @@ api
 
 filterPresenter.init();
 tripPresenter.init();
+
+
+window.addEventListener('load', () => {
+  navigator.serviceWorker.register('/sw.js');
+});
