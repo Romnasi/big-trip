@@ -3,6 +3,8 @@ import SortView from './../view/sort.js';
 import PointListView from './../view/point-list.js';
 import LoadingView from './../view/loading.js';
 import NoPointView from './../view/no-point.js';
+import TripInfoView from './../view/trip-info.js';
+import TripCostView from './../view/trip-cost.js';
 
 import PointPresenter, {State as PointPresenterViewState} from './point.js';
 import PointNewPresenter from './point-new.js';
@@ -24,6 +26,8 @@ export default class Trip {
     this._api = api;
 
     this._sortComponent = null;
+    this._tripInfoComponent = null;
+    this._tripCostComponent = null;
 
     this._tripComponent = new TripView();
     this._pointListComponent = new PointListView();
@@ -132,6 +136,8 @@ export default class Trip {
     switch (updateType) {
       case UpdateType.PATCH:
         this._pointPresenter[data.id].init(data, this._store.getOffers(), this._store.getDestinations());
+        this._clearMenuInfo();
+        this._renderMenuInfo();
         break;
       case UpdateType.MINOR:
         this._clearTrip();
@@ -199,6 +205,12 @@ export default class Trip {
   }
 
 
+  _clearMenuInfo() {
+    remove(this._tripInfoComponent);
+    remove(this._tripCostComponent);
+  }
+
+
   _clearTrip({resetSortType = false} = {}) {
 
     this._pointNewPresenter.destroy();
@@ -211,9 +223,27 @@ export default class Trip {
     remove(this._loadingComponent);
     remove(this._noPointComponent);
 
+    this._clearMenuInfo();
+
     if (resetSortType) {
       this._currentSortType = SortType.DAY;
     }
+  }
+
+
+  _renderMenuInfo(points = this._getPoints().slice()) {
+    if (this._tripInfoComponent) {
+      this._tripInfoComponent = null;
+    }
+
+    if (this._tripCostComponent) {
+      this._tripCostComponent = null;
+    }
+
+    this._tripInfoComponent = new TripInfoView(points);
+    this._tripCostComponent = new TripCostView(points);
+    render(document.querySelector('.trip-main'), this._tripInfoComponent, RenderPosition.AFTERBEGIN);
+    render(this._tripInfoComponent, this._tripCostComponent, RenderPosition.BEFOREEND);
   }
 
 
@@ -223,7 +253,7 @@ export default class Trip {
       return;
     }
 
-    const points = this._getPoints();
+    const points = this._getPoints().slice();
     const pointsCount = points.length;
 
     if (pointsCount === 0) {
@@ -232,6 +262,7 @@ export default class Trip {
     }
 
     this._renderSort();
-    this._renderPoints(points.slice());
+    this._renderPoints(points);
+    this._renderMenuInfo(points);
   }
 }

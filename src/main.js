@@ -1,11 +1,7 @@
 import SiteMenuView from './view/site-menu.js';
 import StatsView from './view/stats.js';
-import TripInfoView from './view/trip-info.js';
-import TripCostView from './view/trip-cost.js';
-
 import TripPresenter from './presenter/trip.js';
 import FilterPresenter from './presenter/filter.js';
-
 
 import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
@@ -83,19 +79,11 @@ api
   .then((points) => {
     pointsModel.setPoints(UpdateType.INIT, points);
 
-    const tripInfoComponent = new TripInfoView(points);
-    render(tripMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN);
-    render(tripInfoComponent, new TripCostView(points), RenderPosition.BEFOREEND);
-
     render(navigationElement, siteMenuComponent, RenderPosition.BEFOREEND);
     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick, btnNewEventElement);
   })
   .catch(() => {
     pointsModel.setPoints(UpdateType.INIT, []);
-
-    const tripInfoComponent = new TripInfoView([]);
-    render(tripMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN);
-    render(tripInfoComponent, new TripCostView([]), RenderPosition.BEFOREEND);
 
     render(navigationElement, siteMenuComponent, RenderPosition.BEFOREEND);
     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick, btnNewEventElement);
