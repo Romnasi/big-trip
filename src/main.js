@@ -8,7 +8,7 @@ import FilterModel from './model/filter.js';
 
 import {render, RenderPosition, remove} from './utils/render.js';
 import {MenuItem, UpdateType, FilterType} from './const.js';
-import Api from './api.js';
+import Api from './api/api.js';
 import Store from './store.js';
 
 
