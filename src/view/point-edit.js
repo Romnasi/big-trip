@@ -454,6 +454,7 @@ export default class PointEdit extends SmartView {
     evt.preventDefault();
     this.updateData({
       price: parseInt(evt.target.value, 10),
+      isPrice: true,
     },
     true,
     );
@@ -485,7 +486,9 @@ export default class PointEdit extends SmartView {
 
   setResetClickHandler(callback) {
     this._callback.resetClick = callback;
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._formResetClickHandler);
+    if (this.getElement().querySelector('.event__rollup-btn')) {
+      this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._formResetClickHandler);
+    }
   }
 
 
