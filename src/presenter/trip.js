@@ -76,7 +76,7 @@ export default class Trip {
     const filtredPoints = filter[filterType](points);
 
     switch (this._currentSortType) {
-      case SortType.DATE:
+      case SortType.DAY:
         return filtredPoints.sort(sortByDateUp);
       case SortType.TIME:
         return filtredPoints.sort(sortByTimeDown);
@@ -170,7 +170,7 @@ export default class Trip {
 
   _renderSort() {
     if (this._sortComponent !== null) {
-      this._sortComponent == null;
+      this._sortComponent = null;
     }
 
     this._sortComponent = new SortView(this._currentSortType);
