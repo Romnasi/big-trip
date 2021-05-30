@@ -228,6 +228,7 @@ export default class PointEdit extends SmartView {
     this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
+    this._formResetClickHandler = this._formResetClickHandler.bind(this);
     this._typePointListHandler = this._typePointListHandler.bind(this);
     this._destinationListHandler = this._destinationListHandler.bind(this);
     this._addedOffersChangeHandler = this._addedOffersChangeHandler.bind(this);
@@ -272,6 +273,7 @@ export default class PointEdit extends SmartView {
     this._setEndDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteClick);
+    this.setResetClickHandler(this._callback.resetClick);
   }
 
 
@@ -470,9 +472,20 @@ export default class PointEdit extends SmartView {
   }
 
 
+  _formResetClickHandler(evt) {
+    this._callback.resetClick(evt);
+  }
+
+
   setDeleteClickHandler(callback) {
     this._callback.deleteClick = callback;
     this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
+  }
+
+
+  setResetClickHandler(callback) {
+    this._callback.resetClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._formResetClickHandler);
   }
 
 
