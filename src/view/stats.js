@@ -254,81 +254,81 @@ export default class Stats extends SmartView {
     this._setCharts();
   }
 
-  _getMoneyByType() {
-    const moneyByType = [];
+  _getPrices() {
+    const prices = [];
 
     this._types.forEach((currentType, i) => {
       this._points.map(({price, type}) => {
         if (type === currentType) {
 
-          if (!moneyByType[i]) {
-            moneyByType[i] = {
+          if (!prices[i]) {
+            prices[i] = {
               type: currentType,
               price: price,
             };
           } else {
-            moneyByType[i] = Object.assign(
-              moneyByType[i],
-              {price: moneyByType[i].price + price},
+            prices[i] = Object.assign(
+              prices[i],
+              {price: prices[i].price + price},
             );
           }
         }
       });
     });
 
-    return moneyByType.sort((a, b) => a.price < b.price ? 1 : -1);
+    return prices.sort((a, b) => a.price < b.price ? 1 : -1);
   }
 
 
-  _getNumberOfType() {
-    const numberOfType = [];
+  _getQuantities() {
+    const quantities = [];
 
     this._types.forEach((currentType, i) => {
       this._points.map(({type}) => {
         if (type === currentType) {
 
-          if (!numberOfType[i]) {
-            numberOfType[i] = {
+          if (!quantities[i]) {
+            quantities[i] = {
               type: [currentType][0],
               number: 1,
             };
           } else {
-            numberOfType[i] = Object.assign(
-              numberOfType[i],
-              {number: numberOfType[i].number + 1},
+            quantities[i] = Object.assign(
+              quantities[i],
+              {number: quantities[i].number + 1},
             );
           }
         }
       });
     });
 
-    return numberOfType.sort((a, b) => a.number < b.number ? 1 : -1);
+    return quantities.sort((a, b) => a.number < b.number ? 1 : -1);
   }
 
 
-  _getTimeByType() {
-    const timeByType = [];
+  _getTime() {
+    const time = [];
 
     this._types.forEach((currentType, i) => {
       this._points.map(({type, date: {dateTo, dateFrom}}) => {
         if (type === currentType) {
 
-          if (!timeByType[i]) {
-            timeByType[i] = {
+          if (!time[i]) {
+            time[i] = {
               type: [currentType][0],
               time: getDiffDate(dateFrom, dateTo),
             };
           } else {
-            timeByType[i] = Object.assign(
-              timeByType[i],
-              {time: timeByType[i].time + getDiffDate(dateFrom, dateTo)},
+            time[i] = Object.assign(
+              time[i],
+              {time: time[i].time + getDiffDate(dateFrom, dateTo)},
             );
           }
         }
       });
     });
 
-    return timeByType.sort((a, b) => a.time < b.time ? 1 : -1);
+    return time.sort((a, b) => a.time < b.time ? 1 : -1);
   }
 
 
@@ -351,23 +351,23 @@ export default class Stats extends SmartView {
     timeCtx.height = ctxHeight;
 
 
-    const moneyByType = this._getMoneyByType();
-    const moneyChartTypes = moneyByType.map(({type}) => type);
-    const moneyChartMoney = moneyByType.map(({price}) => price);
+    const prices = this._getPrices();
+    const moneyChartTypes = prices.map(({type}) => type);
+    const moneyChartMoney = prices.map(({price}) => price);
 
 
-    const numberByType = this._getNumberOfType();
-    const typeChartTypes = numberByType.map(({type}) => type);
-    const typeChartNumber = numberByType.map(({number}) => number);
+    const quantities = this._getQuantities();
+    const typeChartTypes = quantities.map(({type}) => type);
+    const typeChartQuantities = quantities.map(({number}) => number);
 
 
-    const timeByType = this._getTimeByType();
-    const timeChartTypes = timeByType.map(({type}) => type);
-    const timeChartTime = timeByType.map(({time}) => time);
+    const time = this._getTime();
+    const timeChartTypes = time.map(({type}) => type);
+    const timeChartTime = time.map(({time}) => time);
 
 
     this._moneyChart = renderMoneyChart(moneyCtx, moneyChartMoney, moneyChartTypes);
-    this._typeChart = renderTypeChart(typeCtx, typeChartNumber, typeChartTypes);
+    this._typeChart = renderTypeChart(typeCtx, typeChartQuantities, typeChartTypes);
     this._timeChart = renderTimeSpendChart(timeCtx, timeChartTime, timeChartTypes);
   }
 }
