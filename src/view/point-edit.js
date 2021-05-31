@@ -383,12 +383,14 @@ export default class PointEdit extends SmartView {
 
 
   _startDateChangeHandler([userDate]) {
+    const startDate = userDate ? userDate : new Date();
     this.updateData({
       date: Object.assign(
         {},
         this._data.date,
         {
-          dateTo: userDate,
+          dateTo: startDate,
+          dateFrom: startDate > this._data.date.dateFrom ? startDate : this._data.date.dateFrom,
         },
       ),
     });
@@ -396,12 +398,14 @@ export default class PointEdit extends SmartView {
 
 
   _endDateChangeHandler([userDate]) {
+    const endDate = userDate ? userDate : new Date();
     this.updateData({
       date: Object.assign(
         {},
         this._data.date,
         {
-          dateFrom: userDate,
+          dateTo: this._data.date.dateTo > endDate ? endDate : this._data.date.dateTo,
+          dateFrom: endDate,
         },
       ),
     });
