@@ -6,11 +6,7 @@ const countOfferPrice = (offers) => {
 };
 
 
-const getPrice = (points) => {
-  const pointPrice = points.reduce((total, point) => total + point.price, 0);
-  const addedOfferPrice = points.reduce((total, point) => total + countOfferPrice(point.addedOffers), 0);
-  return pointPrice + addedOfferPrice;
-};
+const getPrice = (points) => points.reduce((total, point) => total + point.price + countOfferPrice(point.addedOffers), 0);
 
 
 const createTripCostTemplate = (points) => {

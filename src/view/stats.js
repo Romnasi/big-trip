@@ -100,7 +100,7 @@ const renderTypeChart = (typeCtx, numbers, types) => {
         },
       },
       title: {
-        display: Bar.true,
+        display: Bar.TITLE_DISPLAY,
         text: Bar.TYPE_CHART_TITLE,
         fontColor: Bar.TITLE_FONT_COLOR,
         fontSize: Bar.TITLE_FONTSIZE,
@@ -254,81 +254,61 @@ export default class Stats extends SmartView {
     this._setCharts();
   }
 
+
+  _sortMapByValues(mapToSort) {
+    const sortedMap = new Map([...mapToSort.entries()]
+      .sort((firstEntry, secondEntry) => {
+        return secondEntry[1] - firstEntry[1];
+      }));
+    return sortedMap;
+  }
+
   _getPrices() {
-    const prices = [];
+    const prices = new Map();
 
-    this._types.forEach((currentType, i) => {
-      this._points.map(({price, type}) => {
-        if (type === currentType) {
-
-          if (!prices[i]) {
-            prices[i] = {
-              type: currentType,
-              price: price,
-            };
-          } else {
-            prices[i] = Object.assign(
-              prices[i],
-              {price: prices[i].price + price},
-            );
-          }
-        }
-      });
+    this._points.forEach((point) => {
+      if (prices.has(point.type)) {
+        const total = prices.get(point.type) + point.price;
+        prices.set(point.type, total);
+      } else {
+        prices.set(point.type, point.price);
+      }
     });
 
-    return prices.sort((a, b) => a.price < b.price ? 1 : -1);
+    return this._sortMapByValues(prices);
   }
 
 
   _getQuantities() {
-    const quantities = [];
+    const quantities = new Map();
 
-    this._types.forEach((currentType, i) => {
-      this._points.map(({type}) => {
-        if (type === currentType) {
-
-          if (!quantities[i]) {
-            quantities[i] = {
-              type: [currentType][0],
-              number: 1,
-            };
-          } else {
-            quantities[i] = Object.assign(
-              quantities[i],
-              {number: quantities[i].number + 1},
-            );
-          }
-        }
-      });
+    this._points.forEach((point) => {
+      if (quantities.has(point.type)) {
+        const countByType = quantities.get(point.type) + 1;
+        quantities.set(point.type, countByType);
+      } else {
+        quantities.set(point.type, 1);
+      }
     });
 
-    return quantities.sort((a, b) => a.number < b.number ? 1 : -1);
+    return this._sortMapByValues(quantities);
   }
 
 
   _getTime() {
-    const time = [];
+    const time = new Map();
 
-    this._types.forEach((currentType, i) => {
-      this._points.map(({type, date: {dateTo, dateFrom}}) => {
-        if (type === currentType) {
-
-          if (!time[i]) {
-            time[i] = {
-              type: [currentType][0],
-              time: getDiffDate(dateFrom, dateTo),
-            };
-          } else {
-            time[i] = Object.assign(
-              time[i],
-              {time: time[i].time + getDiffDate(dateFrom, dateTo)},
-            );
-          }
-        }
-      });
+    this._points.forEach((point) => {
+      if (time.has(point.type)) {
+        const total = time.get(point.type) + getDiffDate(point.date.dateFrom, point.date.dateTo);
+        time.set(point.type, total);
+      } else {
+        time.set(point.type, getDiffDate(point.date.dateFrom, point.date.dateTo));
+      }
     });
 
-    return time.sort((a, b) => a.time < b.time ? 1 : -1);
+
+    return this._sortMapByValues(time);
   }
 
 
@@ -352,18 +332,18 @@ export default class Stats extends SmartView {
 
 
     const prices = this._getPrices();
-    const moneyChartTypes = prices.map(({type}) => type);
-    const moneyChartMoney = prices.map(({price}) => price);
+    const moneyChartTypes = Array.from(prices.keys());
+    const moneyChartMoney = Array.from(prices.values());
 
 
     const quantities = this._getQuantities();
-    const typeChartTypes = quantities.map(({type}) => type);
-    const typeChartQuantities = quantities.map(({number}) => number);
+    const typeChartTypes = Array.from(quantities.keys());
+    const typeChartQuantities = Array.from(quantities.values());
 
 
     const time = this._getTime();
-    const timeChartTypes = time.map(({type}) => type);
-    const timeChartTime = time.map(({time}) => time);
+    const timeChartTypes = Array.from(time.keys());
+    const timeChartTime = Array.from(time.values());
 
 
     this._moneyChart = renderMoneyChart(moneyCtx, moneyChartMoney, moneyChartTypes);
