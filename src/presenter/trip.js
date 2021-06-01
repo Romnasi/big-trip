@@ -212,7 +212,6 @@ export default class Trip {
 
 
   _clearTrip({resetSortType = false} = {}) {
-
     this._pointNewPresenter.destroy();
     Object
       .values(this._pointPresenter)

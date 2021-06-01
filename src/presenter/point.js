@@ -71,6 +71,7 @@ export default class Point {
   destroy() {
     remove(this._pointComponent);
     remove(this._pointEditComponent);
+    document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
 
@@ -155,6 +156,7 @@ export default class Point {
 
 
   _handleFormSubmit(update) {
+    document.removeEventListener('keydown', this._escKeyDownHandler);
 
     const isMinorUpdate =
       !isDateEqual(this._point.date.dateTo, update.date.dateTo) ||
@@ -170,6 +172,8 @@ export default class Point {
 
 
   _handleDeleteClick(point) {
+    document.removeEventListener('keydown', this._escKeyDownHandler);
+
     this._changeData(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,
