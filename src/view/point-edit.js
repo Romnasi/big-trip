@@ -128,9 +128,9 @@ const createPointEditTemplate = (data, cities, offers) => {
   let resetButtonText = '';
   if (isNew) {
     resetButtonText = isReseting ? 'Canceling...' : 'Cancel';
-  } else (
-    resetButtonText = isReseting ? 'Deleting...' : 'Delete'
-  );
+  } else {
+    resetButtonText = isReseting ? 'Deleting...' : 'Delete';
+  }
 
 
   return `<li class="trip-events__item">

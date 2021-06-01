@@ -4,7 +4,7 @@ import {getDiffDate} from './date.js';
 // Функция помещает задачи без даты в конце списка,
 // возвращая нужный вес для колбэка sort
 const getWeightForNullDate = (dateA, dateB) => {
-  if (dateA === null && dateB == null) {
+  if (dateA === null && dateB === null) {
     return 0;
   }
 
