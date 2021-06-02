@@ -1,8 +1,11 @@
 import PointView from './../view/point.js';
 import PointEditView from './../view/point-edit.js';
+import {isOnline} from './../utils/common.js';
 import {render, RenderPosition, replace, remove} from './../utils/render.js';
 import {UserAction, UpdateType} from './../const.js';
 import {isDateEqual} from './../utils/date.js';
+import {toast} from './../utils/toast.js';
+
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -136,6 +139,11 @@ export default class Point {
 
 
   _handleEditClick() {
+    if (!isOnline()) {
+      toast('You can\'t edit point offline');
+      return;
+    }
+
     this._replacePointToForm();
   }
 
@@ -156,6 +164,11 @@ export default class Point {
 
 
   _handleFormSubmit(update) {
+    if (!isOnline()) {
+      toast('You can\'t save point offline');
+      return;
+    }
+
     document.removeEventListener('keydown', this._escKeyDownHandler);
 
     const isMinorUpdate =
@@ -172,6 +185,11 @@ export default class Point {
 
 
   _handleDeleteClick(point) {
+    if (!isOnline()) {
+      toast('You can\'t delete point offline');
+      return;
+    }
+
     document.removeEventListener('keydown', this._escKeyDownHandler);
 
     this._changeData(

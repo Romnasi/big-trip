@@ -3,8 +3,8 @@ import PointsModel from './../model/points.js';
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
-  POST: 'POST',
   DELETE: 'DELETE',
+  POST: 'POST',
 };
 
 const SuccesHTTPStatusRnge = {
@@ -13,10 +13,9 @@ const SuccesHTTPStatusRnge = {
 };
 
 export default class Api {
-  constructor (endPoint, authorization, store) {
+  constructor (endPoint, authorization) {
     this._endPoint = endPoint;
     this._authorization = authorization;
-    this._store = store;
   }
 
 
@@ -36,25 +35,6 @@ export default class Api {
   getDestinations() {
     return this._load({url: 'destinations'})
       .then(Api.toJSON);
-  }
-
-
-  getAllData() {
-    return Promise
-      .all([
-        this.getPoints(),
-        this.getOffers(),
-        this.getDestinations(),
-      ])
-      .then(([points, offers, destinations]) => {
-        this._store.setOffers(offers);
-        this._store.setDestinations(destinations);
-        return points;
-      })
-      .catch(() => {
-        this._store.setDestinations([]);
-        this._store.setOffers([]);
-      });
   }
 
 
@@ -89,6 +69,17 @@ export default class Api {
   }
 
 
+  sync(data) {
+    return this._load({
+      url: 'points/sync',
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(Api.toJSON);
+  }
+
+
   _load({
     url,
     method = Method.GET,
@@ -106,20 +97,20 @@ export default class Api {
   }
 
 
-  static checkStatus(responce) {
+  static checkStatus(response) {
     if (
-      responce.status < SuccesHTTPStatusRnge.MIN ||
-      responce.status > SuccesHTTPStatusRnge.MAX
+      response.status < SuccesHTTPStatusRnge.MIN ||
+      response.status > SuccesHTTPStatusRnge.MAX
     ) {
-      throw new Error(`${responce.status}: ${responce.statusText}`);
+      throw new Error(`${response.status}: ${response.statusText}`);
     }
 
-    return responce;
+    return response;
   }
 
 
-  static toJSON(responce) {
-    return responce.json();
+  static toJSON(response) {
+    return response.json();
   }
 
 

@@ -1004,3 +1004,18 @@ main {
   .shake {
     animation: shake 0.6s;
   }
+
+  .toast-container {
+    position: absolute;
+  }
+
+  .toast-item {
+    margin: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    background-color: yellow;
+    border-radius: 10px;
+  }
